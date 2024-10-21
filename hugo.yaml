@@ -74,7 +74,7 @@ params:
   # images: ["<link or path of image for opengraph, twitter-cards>"] # 设置用于OpenGraph和Twitter卡片的图片链接
   # DateFormat: "January 2, 2006" # 显示日期的格式
   DateFormat: "2006-01-02"
-  defaultTheme: auto # 默认主题模式，可选dark（暗色）、light（亮色）、auto（根据系统自动切换）
+  defaultTheme: dark # 默认主题模式，可选dark（暗色）、light（亮色）、auto（根据系统自动切换）
   disableThemeToggle: false # 禁用主题切换按钮
 
   ShowReadingTime: false # 显示文章的预计阅读时间
