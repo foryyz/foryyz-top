@@ -22,7 +22,7 @@ draft: false
 
 
 
-# 项目结构
+## 项目结构
 
 ### run.py - RUN Install - 执行环境安装
 
@@ -45,7 +45,7 @@ draft: false
 
 
 
-# 更新日志
+## 更新日志
 
 ```
 # - 表示新增加的功能
@@ -111,7 +111,7 @@ a0.100	yyz
 
 
 
-# Python环境
+## Python环境
 
 version=3.12.2
 
@@ -120,9 +120,9 @@ version=3.12.2
 
 
 
-# 附录：
+## 附录：
 
-## 1 subprocess库
+### 1 subprocess库
 
 ```python
 env_var = "JAVA_HOME"
@@ -139,7 +139,7 @@ value = result.stdout
 
 
 
-## 2 相关PowerShell指令
+### 2 相关PowerShell指令
 
 ```powershell
 #查找名为JAVA_HOME的环境变量(当前用户)
@@ -153,7 +153,7 @@ $env:PATH
 
 ```
 
-### 修改环境变量的值
+#### 修改环境变量的值
 
 ```powershell
 #其中第三个参数[System.EnvironmentVariableTarget]::Target指定了作用范围
@@ -165,14 +165,14 @@ $env:PATH
 #[System.Environment]::SetEnvironmentVariable('Path', $env:PATH+';C:\AutoDeployToolsEnvs\Envs\jdk-23\bin', [System.EnvironmentVariableTarget]::User)
 ```
 
-### 查找环境变量的值
+#### 查找环境变量的值
 
 ```powershell
 [System.Environment]::GetEnvironmentVariable("VariableName",[System.EnvironmentVariableTarget]::User)
 #此为查找用户级别的环境变量值
 ```
 
-### 手动更新/刷新环境变量
+#### 手动更新/刷新环境变量
 
 ```powershell
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path",[System.EnvironmentVariableTarget]::User)
