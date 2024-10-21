@@ -1,0 +1,172 @@
+# languageCode: 'en-us'
+baseURL: "https://foryyz.top/" # 主站的 URL
+title: 🫨 Here is yyz! # 站点标题
+copyright: "[©2024 foryyz's Blog](https://foryyz.top/)" # 网站的版权声明，通常显示在页脚
+theme: PaperMod # 主题
+languageCode: zh-cn # 语言
+paginate: 8 #每页个数
+
+enableInlineShortcodes: true #允许内联带代码
+hasCJKLanguage: true # 自动检测是否包含中文日文韩文,如果文章中使用了很多中文引号的话可以开启
+enableRobotsTXT: true # 允许爬虫抓取到搜索引擎
+buildDrafts: false # 构建时是否包括草稿
+buildFuture: false # 构建未来发布的内容
+buildExpired: false # 构建过期的内容
+enableEmoji: true # 允许 emoji
+pygmentsUseClasses: true
+defaultContentLanguage: zh # 顶部首先展示的语言界面
+defaultContentLanguageInSubdir: false # 是否要在地址栏加上默认的语言代码
+# googleAnalytics: UA-123-45 # 谷歌统计
+minify:
+  disableXML: true
+  minifyOutput: true
+permalinks: #浏览器链接显示方式
+  post: "/:title/"
+
+#导航栏
+languages:
+  zh:
+    languageName: "中文" # 展示的语言名
+    weight: 1 # 权重
+    taxonomies: # 分类系统
+      # category: categories
+      tag: tags
+    # https://gohugo.io/content-management/menus/#define-in-site-configuration
+    menus:
+      main:
+        # - name: /HOME🗼
+        #   pageRef: /
+        #   weight: 4 # 控制在页面上展示的前后顺序
+        - name: /Posts🗯
+          pageRef: /posts
+          weight: 4
+        - name: /ARCHIVES🕑
+          pageRef: /archives/
+          weight: 5
+        # - name: /CATEGORIES🖇
+        #   pageRef: categories/
+        #   weight: 10
+        - name: /TAGS🚦
+          pageRef: tags/
+          weight: 11
+        - name: /SEARCH🔍
+          pageRef: search/
+          weight: 20
+        - name: /ABOUT🌞
+          pageRef: about/
+          weight: 21
+
+#为搜索配置JSON
+outputs:
+  home:
+    - HTML # 生成的静态页面
+    - RSS # 这个其实无所谓
+    - JSON # necessary for search, 这里的配置修改好之后，一定要重新生成一下
+
+params:
+  social: true
+  env: production
+  
+  title: foryyz # 网站标题，显示在浏览器标签和搜索引擎结果中
+  description: "Edit MarkDownText & Edit Life." # 网站描述，用于SEO和页面预览
+  keywords: [foryyz, Blog, internet] # SEO关键词，帮助搜索引擎索引
+  author: yyz # author: ["Me", "You"] # 支持多个作者，注释掉的是示例
+  # images: ["<link or path of image for opengraph, twitter-cards>"] # 设置用于OpenGraph和Twitter卡片的图片链接
+  # DateFormat: "January 2, 2006" # 显示日期的格式
+  DateFormat: "2006-01-02"
+  defaultTheme: auto # 默认主题模式，可选dark（暗色）、light（亮色）、auto（根据系统自动切换）
+  disableThemeToggle: false # 禁用主题切换按钮
+
+  ShowReadingTime: false # 显示文章的预计阅读时间
+  ShowShareButtons: false # 是否显示社交分享按钮
+  ShowPostNavLinks: false # 是否显示上一篇和下一篇文章的导航链接
+  ShowBreadCrumbs: true # 显示面包屑导航
+  ShowCodeCopyButtons: true # 为代码块显示“复制”按钮
+  ShowWordCount: false # 显示文章字数统计
+  # ShowRssButtonInSectionTermList: false # 是否在部分或分类列表中显示RSS按钮
+  UseHugoToc: true # 使用Hugo生成的目录（TOC，Table of Contents）
+  disableSpecial1stPost: false # 禁用首页第一篇文章的特殊样式（例如强调）
+  disableScrollToTop: false # 禁用“回到顶部”按钮
+  comments: false # 是否启用评论功能
+
+  hidemeta: false # 是否隐藏文章的元数据（如日期、标签等）
+  hideSummary: false # 是否隐藏文章摘要
+  hidefooter: true # 是否隐藏网站页脚
+
+  # showLastMod: true # 显示文章最后修改时间
+  # VisitCount: true # 显示文章的访问计数
+  
+  showtoc: true # 是否显示文章目录
+  tocopen: false # 默认是否展开文章目录
+
+  # 主页 HOME - profile-mode
+  profileMode:
+    enabled: true # needs to be explicitly set
+    title: 🫨Edit My Life.
+    subtitle: "😍 Hope Y😶U HappY🤩! EveRyDay-z🧸"
+    imageUrl: "img/head.jpg"
+    imageWidth: 120
+    imageHeight: 120
+    imageTitle: foryyz
+    # buttons:
+    #   - name: Archives
+    #     url: archives
+    #   - name: Blogs
+    #     url: posts
+    #   - name: Tags
+    #     url: tags
+  
+  # 用来显示HOME
+  label:
+    text: "Home"
+    icon: img/head.jpg
+    iconHeight: 35
+
+  # home-info mode - 暂时不知道干嘛的
+  homeInfoParams:
+    Title: "Hi there \U0001F44B"
+    Content: Welcome to my blog
+
+  # 主页图标
+  socialIcons:
+    # - name: telegram
+    #   url: "https://t.me/+1I1GfwrvtFY0ODRl"
+    - name: github
+      url: "https://github.com/foryyz"
+    - name: tiktok
+      url: "https://v.douyin.com/ijLNwmMW/"
+  
+  # 搜索功能
+  fuseOpts:
+      isCaseSensitive: false # 是否大小写敏感
+      shouldSort: true # 是否排序
+      location: 0
+      distance: 1000
+      threshold: 0.4
+      minMatchCharLength: 0
+      # limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
+      keys: ["title", "permalink", "summary", "content"]
+      includeMatches: true
+
+  # 搜索引擎索引
+  analytics:
+    google:
+      SiteVerificationTag: "foryyz"
+    bing:
+      SiteVerificationTag: "foryyz"
+    yandex:
+      SiteVerificationTag: "foryyz"
+
+  # 提建议地址 - 还没弄好
+  # editPost:
+  #   URL: "https://github.com/<path_to_repo>/content"
+  #   Text: "Suggest Changes" # edit text
+  #   appendFilePath: true # to append file path to Edit link
+  
+  # 设置网站的标签页的图标，即 favicon
+  assets:
+      favicon: "favicon.ico"
+      favicon16x16: "favicon.ico"
+      favicon32x32: "favicon.ico"
+      apple_touch_icon: "favicon.ico"
+      safari_pinned_tab: "favicon.ico"

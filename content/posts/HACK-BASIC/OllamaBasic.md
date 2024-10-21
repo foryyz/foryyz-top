@@ -1,0 +1,19 @@
+---
+title: 'Ollama - 安装与基本使用'
+date: 2024-06-22T15:01:31+08:00
+draft: false
+tags: ['AI','LLM','Ollama']
+---
+
+> Author - yyz
+>
+> **Last Update Time - 2024/06/06**
+>
+> 操作系统 - Ubuntu 22.04
+
+# 0 安装Ollama
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
