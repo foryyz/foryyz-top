@@ -2,6 +2,7 @@
 title: 'AutoDeployer - Windows环境部署工具'
 date: 2024-10-21T21:37:19+08:00
 draft: false
+tags: ["Python","yyz"]
 ---
 
 > 项目开始时间: 2024/10/08
@@ -22,26 +23,52 @@ draft: false
 
 
 
-## 项目结构
+## 项目说明
 
-### run.py - RUN Install - 执行环境安装
+### **应用场景：**
 
-### runUninstall.py - RUN Uninstall - 执行环境卸载
+- 大规模批量的自动化环境部署
+- 个人使用，规范化个人开发环境
 
-#### envManager.py - 目前的主要运行类
+### **开发进展：**
 
-- **EnvLoader**
-- **EnvChecker**
-- **EnvInstaller**
-- **EnvUninstaller**
+- 详细可看[更新日志](#1.3)
 
-#### logManager.py - 读取used.log文件
+### **使用方式：**
 
-- **LogLoader** - 书写使用程序安装过的环境
+1. 开发者通过编辑config.yaml添加适用环境，可以自由选择需要添加的标签，若无标签程序可自动判断跳过，且程序会通过已有标签的内容自动选择环境的安装方式。
+2. 使用者运行run.py程序，进行环境的选择，选择后进行环境的已安装检测，若已安装可选覆盖安装，未安装则开始安装。
+3. 安装后添加记录至used.log，后续可以使用runUninstall.py卸载环境。
 
-#### config.yaml - 主要的环境安装配置文件
+### **实现功能：**
 
-#### used.log - 保存使用该程序安装过的环境
+- JDK和Maven环境的 下载-解压-安装-配置环境变量
+- 对电脑已安装环境的检测
+- 不同软件进行不同的安装方式
+- 使用本软件安装的环境的卸载
+
+
+
+## 代码结构
+
+**run.py** - 执行环境安装
+
+**runUninstall.py** - 执行环境卸载
+
+envManager.py - 目前的主要运行类
+
+- EnvLoader
+- EnvChecker
+- EnvInstaller
+- EnvUninstaller
+
+logManager.py - 读取used.log文件
+
+- LogLoader - 书写使用程序安装过的环境
+
+config.yaml - 主要的环境安装配置文件
+
+used.log - 保存使用该程序安装过的环境
 
 
 
@@ -108,6 +135,10 @@ a0.100	yyz
 	- 实现 对已安装的程序进行日志生成
 	- 实现 对不同环境的不同安装管理→config.yaml
 ```
+
+### 版本号说明：
+
+- a.xxx - Demo开发阶段①
 
 
 
