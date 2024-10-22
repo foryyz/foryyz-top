@@ -9,13 +9,13 @@ tags: ["Python","yyz"]
 >
 > 项目成员: yyz
 >
-> 最新更新时间: 2024/10/11
+> 最新更新时间: 2024/10/22
 >
-> [版本号](#版本号说明): a0.123
+> [版本号](#版本号说明): a0.124
 
 # AutoDeployer
 
-**a0.123**
+**a0.124**
 
 **项目目的：实现一键的全自动Windows环境部署**
 
@@ -55,20 +55,26 @@ tags: ["Python","yyz"]
 
 **runUninstall.py** - 执行环境卸载
 
-envManager.py - 目前的主要运行类
+**env_manager.py**
 
-- EnvLoader
-- EnvChecker
-- EnvInstaller
-- EnvUninstaller
+- EnvLoader - 它用来具体**解析config.yaml**文件并返回字典,并有返回各种具体值的方法
+- EnvChecker - 它包含完整的**已安装环境检测**流程,他的run_check方法用来执行一整套流程并返回是否存在
+- EnvInstaller - 它用来执行完整的环境**安装**流程，在创建实例时执行安装流程
+  - 它的属性return_installed_over用来返回是否执行成功
+- EnvUninstaller - 它用来执行完整的环境**卸载**流程，在创建实例时执行卸载流程
+  - 它的属性return_uninstalled_over用来返回是否执行成功
 
-logManager.py - 读取used.log文件
+**file_loader.py**
 
-- LogLoader - 书写使用程序安装过的环境
+- FileLoader - 用来读取文件的类，根据收到文件类型不同返回不同数据
 
-config.yaml - 主要的环境安装配置文件
+**log_manager.py** - 日志加载器
 
-used.log - 保存使用该程序安装过的环境
+- =LogLoader - 书写使用程序安装过的环境
+
+**used.log** - 保存使用该程序安装过的环境
+
+**Util.py** - 用来保存静态常量
 
 
 
@@ -78,6 +84,12 @@ used.log - 保存使用该程序安装过的环境
 # - 表示新增加的功能
 # / 表示发现的BUG
 # ~~*~~ 表示删除线
+a0.124	yyz	2024/10/22	*Push
+	- 创建 Util.py 用来保存固定路径等静态常量
+	- 创建 file_loader.py 用来打开并读取不同的文件内容(统一文件的读取方式有利于后续的开发)
+	- 优化 文件和类的命名规则
+	- 优化 各主要实现类的代码逻辑，去除冗余代码
+
 a0.123	yyz	2024/10/11	*Push
 	- 实现 可以为环境添加任意个环境变量,并支持多种方式识别config.yaml中的env_var
 	- 优化 控制台输出美化
