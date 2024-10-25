@@ -140,10 +140,15 @@ conda clean -y --all
 
 ```bash
 #配置国内源 - 方法一
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
-conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
-conda config --set show_channel_urls yes   # 设置搜索时显示通道地址
+#添加镜像源
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/pro
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+#终端显示包从哪个channel下载，以及下载地址是什么
+conda config --set show_channel_urls yes
+
 #方法二 - 把下面文字拷贝到 ~/.condarc中
 channels:
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
@@ -171,5 +176,6 @@ conda config --show-sources   找到.condac文件并查看里面的镜像源
 #清华源
 python -m pip install --upgrade pip#更新pip
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
 ```
 

@@ -1,8 +1,7 @@
 ---
-title: 'LangChain - Embedding模型'
+title: 'Embedding模型的使用'
 date: 2024-06-06T09:57:08+08:00
 draft: false
-tags: ['AI','LangChain','RAG']
 ---
 # 1 安装Ollama和Embedding模型
 
