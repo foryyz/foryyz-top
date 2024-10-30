@@ -9,13 +9,17 @@ tags: ['Python','Anaconda']
 >
 > Create Time - 2024/06/22
 >
-> **Last Update Time - 2024/06/22**
+> **Last Update Time - 2024/10/30**
 
-# 0 安装Anaconda
+# Anaconda
+
+
+
+## 0 安装Anaconda
 
 **下载地址** - [Download Now | Anaconda](https://www.anaconda.com/download/success)
 
-## Linux安装 ↓ (下文以2024.02-1版本为例)
+**Linux安装 ↓ (下文以2024.02-1版本为例)**
 
 ```bash
 #使用wget下载安装文件
@@ -27,7 +31,7 @@ sh Anaconda3-2024.02-1-Linux-x86_64.sh
 
 
 
-# 1 管理conda
+## 1 管理conda
 
 ```bash
 #验证conda已经安装
@@ -46,9 +50,9 @@ rm -rf ~/anaconda3
 
 
 
-# 2 使用conda
+## 2 使用conda
 
-## 环境 - 基本管理
+### 环境 - 基本管理
 
 ```bash
 #创建新环境 例:conda create –n env_name python=3.11 numpy pandas
@@ -67,7 +71,7 @@ conda env list
 conda remove –-name <env_name> -–all
 ```
 
-## 包 - 管理
+### 包 - 管理
 
 ```bash
 #安装包
@@ -96,9 +100,7 @@ conda search <text>#模糊查找
 conda search –full-name <package_full_name>#精确查找
 ```
 
-
-
-## 环境 - 高级管理
+### 环境 - 高级管理
 
 ```bash
 #复制环境 Conda没有重命名环境功能的, 要实现这个需求可以通过克隆-删除
@@ -119,7 +121,7 @@ conda config --set auto_activate_base true  #关闭自动激活状态
 
 ```
 
-# 3 配置Conda
+## 3 配置Conda
 
 ```bash
 #查询配置信息
@@ -137,6 +139,10 @@ conda clean -y --all
 ```
 
 ### 配置conda国内源
+
+`conda config --show channels`  - 显示当前的镜像路径
+
+#### Linux
 
 ```bash
 #配置国内源 - 方法一
@@ -166,9 +172,45 @@ conda config --remove-key channels   换回conda默认源，在出现一些故�
 conda config --show-sources   找到.condac文件并查看里面的镜像源
 ```
 
+#### windows
+
+```powershell
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+
+conda config --set show_channel_urls yes #设置搜索时显示通道地址
+```
+
+### 配置conda环境和包路径(Windows)
+
+**$PATH:**
+
+```
+C:\ENVIRONMENT\ANACONDA\anaconda3
+C:\ENVIRONMENT\ANACONDA\anaconda3\Scripts
+C:\ENVIRONMENT\ANACONDA\anaconda3\Library\bin
+C:\ENVIRONMENT\ANACONDA\anaconda3\Library\mingw-w64\bin
+```
+
+**显示.condarc文件（如果不显示执行）**
+
+```powershell
+conda config --set show_channel_urls yes
+```
+
+**.condarc** >>>
+
+```
+envs_dirs:
+  - C:\ENVIRONMENT\ANACONDA\envs
+pkgs_dirs:
+  - C:\ENVIRONMENT\ANACONDA\pkgs
+```
 
 
-# x 其他说明
+
+## x 其他说明
 
 ## x1 如何配置pip全局镜像源
 
