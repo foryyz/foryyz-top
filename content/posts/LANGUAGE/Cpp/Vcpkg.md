@@ -2,6 +2,7 @@
 title: 'Vcpkg - C++包管理工具的基本配置'
 date: 2024-10-25T17:08:47+08:00
 draft: false
+tags: ['C++']
 ---
 
 # Vcpkg - C++包管理工具的基本配置

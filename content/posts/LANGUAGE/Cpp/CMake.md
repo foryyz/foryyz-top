@@ -2,6 +2,7 @@
 title: 'CMake - 运行原理和使用流程'
 date: 2024-10-25T19:18:10+08:00
 draft: false
+tags: ['C++']
 ---
 
 # CMake

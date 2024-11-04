@@ -13,7 +13,12 @@ tags: ['AI','LLM','Ollama']
 
 # 0 安装Ollama
 
+Linux:
+
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
 
+Windows:
+
+[Download Ollama on Windows](https://ollama.com/download/windows)

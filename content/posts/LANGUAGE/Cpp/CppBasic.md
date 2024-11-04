@@ -2,7 +2,7 @@
 title: 'C++ - 基础语法'
 date: 2024-06-22T16:34:00+08:00
 draft: false
-tags: ['Python','Anaconda']
+tags: ['C++']
 ---
 
 # 一、认识C++
