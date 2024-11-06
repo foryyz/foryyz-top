@@ -1,5 +1,5 @@
 ---
-title: "Computer Basic - 计算机基础"
+title: "Computer Under - 操作系统原理"
 # description: "AnyTHING"
 hidemeat: true #隐藏作者元信息
 ---

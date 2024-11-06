@@ -3,12 +3,6 @@ title: 'Arch Install - 在物理机安装ArchLinux的步骤'
 date: 2024-05-28T11:09:46+08:00
 draft: false
 tags: ['Linux','ArchLinux']
-cover:
-    image: img/head.jpg # image path/url
-    alt: 'This is a ArchLinux Logo' # alt text
-    caption: 'ArchLinux' # display caption under cover
-    # relative: false # when using page bundles set this to true
-    # hidden: true # only hide on current single page
 ---
 > Author - yyz
 >

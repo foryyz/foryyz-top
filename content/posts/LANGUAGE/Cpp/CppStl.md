@@ -336,7 +336,7 @@ Print_deque(deq);
 
 ## 4 实战练习 - String + Vector + Deque
 
-**代码：**[Player_Exercise.h](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/Player_Exercise.h)
+**代码：**[Player_Exercise.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/Player_Exercise.h)
 
 ## 5 Stack 栈 容器
 
@@ -501,7 +501,7 @@ void list_HowToUse_reverseAndSort(){
 
 排序规则：按照年龄升序，如果年龄相同按照身高进行降序
 
-**代码：**[PersonSortExercise.h](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/PersonSortExercise.h)
+**代码：**[PersonSortExercise.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/PersonSortExercise.h)
 
 
 
@@ -556,7 +556,7 @@ void list_HowToUse_reverseAndSort(){
 
 **set容器中插入自定义数据类型，都需要指定排序规则**
 
-**例：**[set存放内置数据类型/set容器放自定义数据类型](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/HowToUseSet.h)
+**例：**[set存放内置数据类型/set容器放自定义数据类型](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/HowToUseSet.h)
 
 ## 9 Map/multimap 容器
 
@@ -608,7 +608,7 @@ map和multimap**区别**：
 
 - 利用仿函数，改变排序规则
 
-**例：**[HowToUseMap.h](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/HowToUseMap.h)
+**例：**[HowToUseMap.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/HowToUseMap.h)
 
 ## 10 函数对象
 
@@ -631,7 +631,7 @@ map和multimap**区别**：
 
 使用方法：**定义类，类中使用operator重载()**
 
-**例：**[HowToUseFunctor.h](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/HowToUseFunctor.h)
+**例：**[HowToUseFunctor.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/HowToUseFunctor.h)
 
 ### 10.2 谓词
 
@@ -677,7 +677,7 @@ map和multimap**区别**：
 - `template<class T> T modulus<T>` // 取模
 - `template<class T> T negate<T>` //取反
 
-示例：[HowToUseFunctorInSTL.h  Line=14](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/HowToUseFunctorInSTL.h)
+示例：[HowToUseFunctorInSTL.h  Line=14](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/HowToUseFunctorInSTL.h)
 
 #### 10.3.2 关系仿函数
 
@@ -692,7 +692,7 @@ map和multimap**区别**：
 - `template<class T> bool less<T>` // 小于
 - `template<class T> bool less_equal<T>` // 小于等于
 
-示例：[HowToUseFunctorInSTL.h  Line=26](https://github.com/foryyz/Cpp_Basic_Exercise/blob/main/Cpp_STL_Exercise/HowToUseFunctorInSTL.h)
+示例：[HowToUseFunctorInSTL.h  Line=26](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/HowToUseFunctorInSTL.h)
 
 #### 10.3.3 逻辑仿函数
 

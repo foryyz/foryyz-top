@@ -1,11 +1,13 @@
 ---
-title: 'LangChain Rag'
+title: 'LangChain-RAG - 1.基础程序和概念说明'
 date: 2024-11-04T17:22:47+08:00
 draft: false
-tags: ['AI','LangChain']
+tags: ['AI','LangChain','RAG']
 ---
 
 # LangChain - RAG
+
+在执行代码之前你需要准备好python环境:  [Click Me!](#00-python环境)
 
 ## 1 使用LangChain创建一个简单 LLM 应用程序
 
@@ -463,6 +465,7 @@ len(docs)
  
  # 向量存储
  pip install langchain-chroma
+ 
 ```
 
 ### x0.1 LangChain环境配置
