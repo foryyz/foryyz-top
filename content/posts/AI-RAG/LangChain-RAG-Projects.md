@@ -376,5 +376,11 @@ for chunk, metadata in app.stream(
 pip install langchain-core langgraph>0.2.27
 
 pip install beautifulsoup4
+
+pip install langchain-nomic # 检索模型
+pip install scikit-learn
+pip install "nomic[local]"
+
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
 
