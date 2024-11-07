@@ -118,14 +118,14 @@ params:
   
   # 用来显示HOME
   label:
-    text: "Home"
-    icon: img/head.jpg
-    iconHeight: 35
+    text: "🥱Home"
+    # icon: img/head.jpg
+    # iconHeight: 35
 
   # home-info mode - 暂时不知道干嘛的
   homeInfoParams:
     Title: "Hi there \U0001F44B"
-    Content: Welcome to my blog
+    Content: Welcome to yyz blog
 
   # 主页图标
   socialIcons:
@@ -164,9 +164,9 @@ params:
   #   appendFilePath: true # to append file path to Edit link
   
   # 设置网站的标签页的图标，即 favicon
-  assets:
-      favicon: "favicon.ico"
-      favicon16x16: "favicon.ico"
-      favicon32x32: "favicon.ico"
-      apple_touch_icon: "favicon.ico"
-      safari_pinned_tab: "favicon.ico"
+  # assets:
+  #     favicon: "favicon.ico"
+  #     favicon16x16: "favicon.ico"
+  #     favicon32x32: "favicon.ico"
+  #     apple_touch_icon: "favicon.ico"
+  #     safari_pinned_tab: "favicon.ico"
