@@ -9,13 +9,11 @@ tags: ['C++']
 
 **CMake是一门**为C++服务的**语言**,即 CMake Language
 
-[CMake和Vcpkg的集成](../Vcpkg)
-
-
+[CMake和Vcpkg的集成](https://foryyz.top/posts/language/cpp/vcpkg/)
 
 ## 1 CMake 项目流程
 
-[CMakeLists.txt详解](#15CMakeLists.txt详解)
+[CMakeLists.txt详解](#15-cmakeliststxt详解)
 
 ### 1.1 创建Cpp源码文件
 

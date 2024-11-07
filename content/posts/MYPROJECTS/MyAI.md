@@ -39,16 +39,16 @@ tags: ['AI','foryyz']
 - **NOW: 将所有原数据建立为摘要模型，存入向量数据库，并使摘要对应原始数据**
 - → 利用不同向量空间，存放不同格式数据
 
-### 1.2 [多模态检索器](#Extract-Data-Type)
+### 1.2 [多模态检索器](#extract-data-type)
 
 - 支持图片格式的检索输出
 - 支持多种文档格式的检索: csv, markdown, html, pdf
 
-### 1.3 [Streamlit - UI](#UI)
+### 1.3 [Streamlit - UI](#ui)
 
 - 使用Streamlit库进行UI组件开发
 
-### 1.4 [多LLM协同的体现](More_LLM)
+### 1.4 [多LLM协同的体现](#more_llm)
 
 - 生成文本摘要使用 **大语言模型LLM**
 - 图片的内容识别使用 **多模态视觉模型 GPT4ALL**
@@ -104,22 +104,22 @@ v0.100→V0.111 - 2024-06-30 - [yyz]
 
 ## x2 Static
 
-##### Extract Data Type
+#### Extract Data Type
 
 ![Extract_Data](../asstes/MyAI/Extract_Data.png)
 
-##### Query_1
+#### Query_1
 
 ![Query_1](../asstes/MyAI/Query_1.png)
 
-##### Vision_1
+#### Vision_1
 
 ![Vision_1](../asstes/MyAI/Vision_1.png)
 
-##### More_LLM
+#### More_LLM
 
 ![Many_LLM.png](../asstes/MyAI/Many_LLM.png)
 
-##### UI
+#### UI
 
 ![UI](../asstes/MyAI/UI.png)
