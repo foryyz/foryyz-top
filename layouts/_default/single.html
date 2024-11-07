@@ -29,7 +29,8 @@
     {{- end }}
   </header>
   {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
-  {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  {{- partial "cover_change.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+  <!-- cover.html 改为 cover_change.html; foryyz -->
   {{- if (.Param "ShowToc") }}
   {{- partial "toc.html" . }}
   {{- end }}
