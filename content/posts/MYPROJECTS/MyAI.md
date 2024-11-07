@@ -31,7 +31,7 @@ tags: ['AI','foryyz']
 
 ## 1 核心更新内容
 
-<img src="./asstes/MyAI/image-20241107223844692.png" alt="image-20241107223844692" style="zoom: 67%;" />
+![Update.png](Update.png)
 
 ### 1.1 检索模型的检索模式
 
@@ -106,20 +106,20 @@ v0.100→V0.111 - 2024-06-30 - [yyz]
 
 ##### Extract Data Type
 
-![Extract_Data](./asstes/MyAI/Extract_Data.png)
+![Extract_Data](../asstes/MyAI/Extract_Data.png)
 
 ##### Query_1
 
-<img src="./asstes/MyAI/image-20241107224153052.png" alt="image-20241107224153052" style="zoom:50%;" />
+![Query_1](../asstes/MyAI/Query_1.png)
 
 ##### Vision_1
 
-<img src="./asstes/MyAI/image-20241107224358399.png" alt="image-20241107224358399" style="zoom: 67%;" />
+![Vision_1](../asstes/MyAI/Vision_1.png)
 
 ##### More_LLM
 
-<img src="./asstes/MyAI/Many_LLM.png" alt="Many_LLM" style="zoom:67%;" />
+![Many_LLM.png](../asstes/MyAI/Many_LLM.png)
 
 ##### UI
 
-![Show_1](./asstes/MyAI/Show_1.png)
+![UI](../asstes/MyAI/UI.png)
