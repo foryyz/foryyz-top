@@ -46,7 +46,7 @@ tags: ['AI','RAG']
 
 ## 2 RAG的基本步骤
 
-![0](./asstes/Rag/0.webp)
+![0](../asstes/Rag/0.webp)
 
 1. Embedding - 知识索引
 2. Vector Store - 知识检索

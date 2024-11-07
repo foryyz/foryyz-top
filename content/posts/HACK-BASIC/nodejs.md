@@ -11,7 +11,7 @@ tags: ['Node.js']
 
 错误信息如下：
 
-![image-20241103152056651](./asstes/nodejs/image-20241103152056651.png)
+![image-20241103152056651](../asstes/nodejs/image-20241103152056651.png)
 
 原因：
 

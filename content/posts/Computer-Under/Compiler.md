@@ -20,7 +20,7 @@ draft: false
 
 ## 3 makefile
 
-![image-20241025221857919](./asstes/Compiler/image-20241025221857919.png)
+![image-20241025221857919](../asstes/Compiler/image-20241025221857919.png)
 
 实际上是一个**依赖树**的说明文件
 

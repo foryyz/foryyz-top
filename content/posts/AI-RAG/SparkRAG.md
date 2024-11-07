@@ -31,11 +31,11 @@ tags: ['AI','Spark','RAG']
 
 **Spark处理**：简短有效、分词准确、效率高时短
 
-![spark_data](./asstes/SparkRAG/spark_data.png)
+![spark_data](../asstes/SparkRAG/spark_data.png)
 
 普通方式处理 ↓
 
-<img src="./asstes/SparkRAG/json-data.png" alt="json-data" style="zoom:75%;" />
+<img src="../asstes/SparkRAG/json-data.png" alt="json-data" style="zoom:75%;" />
 
 ## 2 Spark算法实现
 
@@ -81,8 +81,8 @@ Spark官方文档 - [Word2Vec — PySpark master documentation (apache.org)](htt
 
 如果两词间联系不符合逻辑，则需要调整模型算法
 
-![view1](./asstes/SparkRAG/view1.png)
+![view1](../asstes/SparkRAG/view1.png)
 
 如下图,显示关于**who**单词的有关预测概率 ↓
 
-![view3](./asstes/SparkRAG/view3.png)
+![view3](../asstes/SparkRAG/view3.png)

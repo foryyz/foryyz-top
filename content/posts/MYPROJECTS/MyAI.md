@@ -31,7 +31,7 @@ tags: ['AI','foryyz']
 
 ## 1 核心更新内容
 
-![Update.png](Update.png)
+![Update.png](../asstes/MyAI/Update.png)
 
 ### 1.1 检索模型的检索模式
 

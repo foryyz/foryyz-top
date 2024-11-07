@@ -42,7 +42,7 @@ model.invoke(
 )
 ```
 
-![image-20241105171047686](./asstes/LangChain-RAG-Projects/image-20241105171047686.png)
+![image-20241105171047686](../asstes/LangChain-RAG-Projects/image-20241105171047686.png)
 
 如图，它表示已经知道我的名字了。
 
@@ -106,7 +106,7 @@ output["messages"][-1].pretty_print()
 
 此时我们发现它重新开启了一段对话.
 
-![image-20241105212504281](./asstes/LangChain-RAG-Projects/image-20241105212504281.png)
+![image-20241105212504281](../asstes/LangChain-RAG-Projects/image-20241105212504281.png)
 
 ### 1.3 (Can Be Skipped)对于异步的支持
 
@@ -182,7 +182,7 @@ output["messages"][-1].pretty_print()
 
 效果很好
 
-![image-20241105213804805](./asstes/LangChain-RAG-Projects/image-20241105213804805.png)
+![image-20241105213804805](../asstes/LangChain-RAG-Projects/image-20241105213804805.png)
 
 在让我们**使我们的提示稍微复杂一些**。假设提示模板现在看起来像这样
 
@@ -335,7 +335,7 @@ output["messages"][-1].pretty_print()
 
 如图：
 
-![image-20241105221656297](./asstes/LangChain-RAG-Projects/image-20241105221656297.png)
+![image-20241105221656297](../asstes/LangChain-RAG-Projects/image-20241105221656297.png)
 
 ### 1.6 流式传输
 
