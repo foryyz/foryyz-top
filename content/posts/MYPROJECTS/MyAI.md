@@ -1,5 +1,5 @@
 ---
-title: 'MyAI - 个性化模型构建工具'
+title: 'MyAIv0.2 - 个性化模型构建工具'
 date: 2024-06-22T22:41:20+08:00
 draft: false
 tags: ['AI','foryyz']
@@ -12,14 +12,16 @@ tags: ['AI','foryyz']
 
 # My AI v0.2
 
-项目名称：**My AI - 基于RAG的多模态Agent构建工具**
+(本版本代码暂不开源，MyAI v0.1可前往：[foryyz/Hello-My-AI: YourPersonalAIAssistant](https://github.com/foryyz/Hello-My-AI))
+
+项目名称：**My AI v0.2 - 基于RAG的多模态Agent构建工具**
 
 **迭代日期：2024/06/30 → 2024/11/07 → **
 
 **v0.2 主要特性**：随着GPT4ALL和多模态模型Llama3.2-Vision的发布，支持了工具的**多模态**发布
 
 演示模型：llava-llama3:8B
-演示环境：Ubuntu22.04 - wsl2
+演示环境：**Ubuntu22.04 - wsl2**
 
 
 

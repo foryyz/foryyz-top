@@ -7,7 +7,7 @@ tags: ["Python","yyz"]
 
 > 项目开始时间: 2024/10/08
 >
-> 项目成员: yyz
+> 项目成员: yyz, 冯泽雨
 >
 > 最新更新时间: 2024/10/26
 >
@@ -15,7 +15,7 @@ tags: ["Python","yyz"]
 
 # AutoDeployer
 
-**a0.200**
+**a0.200(已迭代)**,新版本项目暂不公开. 开源代码请前往：[foryyz/AutoDeployer](https://github.com/foryyz/AutoDeployer)
 
 **项目目的：实现一键的全自动Windows环境部署**
 
@@ -169,10 +169,6 @@ a0.100	yyz
 ## Python环境
 
 version=3.12.2
-
-- tqdm
-- pyyaml
-- ...
 
 
 

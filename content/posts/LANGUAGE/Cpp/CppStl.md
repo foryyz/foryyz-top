@@ -710,6 +710,53 @@ map和multimap**区别**：
 
 
 
+## 11 常用算法
+
+### 11.1 常用遍历算法
+
+- `for_each(iterator beg, iterator end, _func)` 遍历并执行函数对象
+- `transform(iterator beg1, iterator end1, iterator beg2, _func)` - 搬运容器到另一个容器中
+  - beg1 - 源容器开始迭代器，end1 - 源容器结束迭代器，beg2 - 目标容器开始迭代器
+  - _func表示可以在搬运的同时对元素进行操作
+    - 注意：搬运之前要先为目标容器开辟空间 vTarget.resize(v.size());
+
+示例：[BasicAlgo_foreach.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/BasicAlgo_foreach.h)
+
+### 11.2 常用查找算法
+
+- `find(iterator beg, iterator end, value)` // 查找元素
+  - 查找beg到end间是否有元素value，找到返回指定位置，否则返回end位置
+  - 查找元素可以为自定义类型对象，需要在对象类内 重写==方法: **operator==**
+- `find_if(iterator beg, iterator end, _Pred)` // 按条件查找元素
+  - 查找beg到end间是否有元素符合函数条件_Pred, 找到返回指定位置，否则返回end位置
+- `adjacent_find(iterator beg, iterator end)` // 查找相邻重复元素
+  - 返回**相邻且重复**元素的第一个位置的迭代器，否则返回end
+- `binary_search(iterator beg, iterator end, value)` // 二分查找法
+  - 查找指定元素是否存在，查到返回true,否则返回false
+  - 在无序序列中不可用,必须是有序序列: set.如果是无序序列查找结果不保证正确性
+- `count(iterator beg, iterator end, value)` // 统计元素个数
+  - 统计自定义数据类型对象，需要在对象类内 重写==方法: **operator==**
+- `count_if(iterator beg, iterator end, _Pred)` // 按条件统计元素个数
+
+示例：[BasicAlgo_search.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/BasicAlgo_search.h)
+
+### 11.3 常用排序算法
+
+- `sort(iterator beg, iterator end, _Pred)` // 按照谓词条件排序
+  - 可以空缺谓词参数，默认升序排序
+- `random_shuffle(iterator beg, iterator end)` // 洗牌
+  - 指定范围内元素随机调整次序
+    - 注：该算法已在C++17特性中被移除，使用shuffle替代
+    - `std::shuffle(v.begin(),v.end(), std::mt19937(std::random_device()()));`
+- `merge(iterator beg1, iterator end1, iterator beg2, iterator end2, iterator dest)` // 合并
+  - 容器元素合并 并储存到另一容器(dest是目标容器)中，记得**提前给目标容器分配空间**
+  - 注：两个容器必须是有序的, 合并时新容器也会自动排序
+- `reverse(iterator beg, iterator end)` // 将容器内元素反转
+
+示例：[BasicAlgo_sort.h](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Cpp_STL_Exercise/BasicAlgo_sort.h)
+
+
+
 ## x1 一些问题
 
 ### 1 迭代器内的++
