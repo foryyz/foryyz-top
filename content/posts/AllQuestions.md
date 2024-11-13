@@ -13,3 +13,8 @@ draft: false
 foreach ($n in (get-appxpackage).packagefamilyname) {checknetisolation loopbackexempt -a -n="$n"}
 ```
 
+## 2 Windows Terminal 快捷键
+
+1. **桌面**新建**快捷方式**，地址填：
+   - `	%LocalAppData%\Microsoft\WindowsApps\wt.exe`
+2. 右键属性填写快捷键Ctrl+Alt+T

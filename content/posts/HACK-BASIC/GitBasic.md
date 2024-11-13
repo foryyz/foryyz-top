@@ -8,19 +8,19 @@ tags: ['Git']
 >
 > Create Time - 2024/06/06
 >
-> **Last Update Time - 2024/06/06**
+> **Last Update Time - 2024/11/13**
 
 # Git
 
 ## 0 基础设置
 
-**安装** `sudo pacman -S git`
+**安装**(Linux) `sudo pacman -S git`
 
 **绑定用户名** `git config --global user.name "Username"`
 
 **绑定邮箱** `git config --global user.email "Email"`
 
-**生成SSH** `ssh-keygen -t rsa -C "Email"`
+**生成SSH** `ssh-keygen -t rsa -C "自定义昵称"`
 
 之后将生成的公钥文件 **id_rsa.pub** 内容复制到 **github->账户->setting->SSH and GPGkeys**
 
@@ -92,5 +92,27 @@ git log
 
 #推送至仓库
 git push --force origin main
+```
+
+## 6 Git 代理设置
+
+### 设置代理
+
+```bash
+# 设置http代理
+git config --global http.proxy http://127.0.0.1:7897
+git config --global https.proxy http://127.0.0.1:7897
+
+# 设置socks代理
+git config --global http.proxy socks5://127.0.0.1:7897
+git config --global https.proxy socks5://127.0.0.1:7897
+# 设置一种即可
+```
+
+### 查看代理
+
+```bash
+git config --global --get http.proxy
+git config --global --get https.proxy
 ```
 
