@@ -18,3 +18,20 @@ foreach ($n in (get-appxpackage).packagefamilyname) {checknetisolation loopbacke
 1. **桌面**新建**快捷方式**，地址填：
    - `	%LocalAppData%\Microsoft\WindowsApps\wt.exe`
 2. 右键属性填写快捷键Ctrl+Alt+T
+
+## 3 Win11右键菜单管理
+
+取消折叠：
+
+```powershell
+reg.exe add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+# 重启资源管理器↓ 或者 重启即可
+taskkill /f /im explorer.exe & start explorer.exe
+```
+
+恢复：
+
+```powershell
+reg.exe delete "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /va /f
+```
+

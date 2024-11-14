@@ -11,6 +11,12 @@ tags: ['C++']
 
 [CMake和Vcpkg的集成](https://foryyz.top/posts/language/cpp/vcpkg/)
 
+## 0 CMake安装
+
+[Download CMake](https://cmake.org/download/)
+
+Windows 下载MSI安装包，安装即可
+
 ## 1 CMake 项目流程
 
 [CMakeLists.txt详解](#15-cmakeliststxt详解)
