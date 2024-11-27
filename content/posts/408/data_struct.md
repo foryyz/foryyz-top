@@ -95,6 +95,13 @@ tags: ['C','408']
 
 ## 2 线性表
 
+逻辑结构上 a1-a2-a3-a4-a5
+
+物理结构上分为：
+
+- 顺序存储
+- 链式存储
+
 ### 2.1 定义和基本操作
 
 线性表是具有**相同数据类型**的**n**(n>=0)个**数据元素**的**有限序列**。
@@ -102,14 +109,30 @@ L = (a1, a2, ... , ai, a(i+1), ... , an )
 
 注意：数据元素的**位序从1开始**
 
+### 2.2 顺序表
+
 顺序表的特点：
 
 - 随机访问，可以在O(1)时间内找到第i个元素 -> data[i-1]
 - 存储密度高，每个节点只存储数据元素
-- 拓展容量不方便
+- 要求大片连续空间，拓展容量不方便
 - 插入、删除操作不方便，需要移动大量元素
 
 代码实现：
 
 ​	**[List.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/List.cpp)**
 
+### 2.3 单链表
+
+单链表的特点：
+
+- 优点：不要求大片连续空间，改变容量方便
+- 缺点：不可随机存取，要耗费一定空间存放指针
+
+考点：
+
+- **[头插法逆置单链表](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/LinkList.cpp#L155)**
+
+代码实现：
+
+​	**[LinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/LinkList.cpp)**
