@@ -120,7 +120,7 @@ L = (a1, a2, ... , ai, a(i+1), ... , an )
 
 代码实现：
 
-​	**[List.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/List.cpp)**
+​	**[List.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/List.cpp)**
 
 ### 2.3 单链表
 
@@ -131,8 +131,114 @@ L = (a1, a2, ... , ai, a(i+1), ... , an )
 
 考点：
 
-- **[头插法逆置单链表](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/LinkList.cpp#L155)**
+- **[头插法逆置单链表](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/LinkList.cpp#L155)**
 
 代码实现：
 
-​	**[LinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/LinkList.cpp)**
+​	**[LinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/LinkList.cpp)**
+
+### 2.4 双链表
+
+解决了**单链表无法逆向检索**的缺点
+
+代码实现：
+
+​	**[DoubleLinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/DoubleLinkList.cpp)**
+
+### 2.5 循环链表
+
+#### 2.5.1 循环单链表
+
+特点：从一个结点出发，可以到达任意一个结点。
+
+拓：如果设定 链表L指向末尾结点，可以在循环单链表基础上更高效的提高对头尾操作的效率
+
+代码实现：
+
+​	**[CircularLinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/CircularLinkList.cpp)**
+
+#### 2.5.2 循环双链表
+
+![循环双链表结构图](../assets/data_struct/2.5.2_1.png)
+
+代码实现：
+
+​	**[CircularDoubleLinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/CircularDoubleLinkList.cpp)**
+
+### 2.6 静态链表
+
+(早期不支持指针的低级语言 使用这个数据结构 代替单链表)
+
+单链表：各个结点在内存中星罗棋布
+静态链表：分配一整片连续的内存空间，各个结点集中安置
+
+特点：容量固定不变, 不可以拓展
+
+- 优点：增、删 操作不需要大量移动元素
+- 缺点：不能随机存取，只能从头结点开始依次往后查
+
+定义：每**一个静态链表的结点** 包含**本身的数据** 和**下一个结点的数组索引**
+
+代码实现：
+
+​	[StaticLinkList.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/ListStruct/StaticListList.cpp)
+
+### 2.7 顺序表和链表的对比
+
+#### 2.7.1 逻辑结构对比
+
+​	都属于线性表，都是线性结构
+
+#### 2.7.2 物理结构对比
+
+- 顺序表：
+  - 支持随机存取、存储密度高
+  - 需要大片连续内存，改变容量不方便
+- 链表：
+  - 离散的小空间分配方便，改变容量方便
+  - 不可随机存取、存储密度低
+
+#### 2.7.3 基本操作对比
+
+**创：**
+
+- **创建顺序表**时，因为拓展容量不方便，**需要预分配大片连续空间**。若分配过大则会浪费内存资源。
+- **创建链表**时，只需要声明一个头指针，并可以按需求选择是否分配头结点
+
+**销：**
+
+- 销毁顺序表
+  - 静态分配内存时，只需要修改Lenght=0，生命周期结束后自动回收
+  - 动态(malloc)分配内存时，需要手动free(L.data)
+- 销毁链表，需要一次删除各个结点free()
+
+**增删：**
+
+- 顺序表
+  - 插入/删除 元素 都要将所有元素 进行前移/后移
+  - 时间复杂度O(n), 主要来自于移动元素
+- 链表
+  - 插入/删除 只需要修改对应指针即可
+  - 时间复杂度O(n), 主要来自于找到目标元素，但**一般来说 增删元素 链表的效率要比顺序表高**
+
+**查：**
+
+- 顺序表 支持随机存取
+  - 按位查找 O(1)
+  - 按值查找 O(n) ，若表内元素有序，可在O(log2n)时间内找到
+- 链表
+  - 按位查找 和 按值查找 都是 O(n)
+
+一般来说，**查找元素 顺序表的效率要比链表高**
+
+#### 2.7.4 如何选择
+
+|              | 顺序表 | 链表 |
+| ------------ | ------ | ---- |
+| 弹性(可扩容) | 😭      | 😄    |
+| 增、删       | 😭      | 😄    |
+| 查           | 😄      | 😭    |
+
+表长难以估计、经常需要增/删元素  -> 链表
+表长可预估、经常需要查询(搜索) -> 顺序表
+
