@@ -242,3 +242,48 @@ L = (a1, a2, ... , ai, a(i+1), ... , an )
 表长难以估计、经常需要增/删元素  -> 链表
 表长可预估、经常需要查询(搜索) -> 顺序表
 
+## 3 栈
+
+**栈：只允许在一端进行插入或删除操作的线性表**
+
+特点：先进后出，后进先出 **Last In First Out (LIFO)**
+
+重要术语：
+
+- 栈顶：允许插入和删除的一端
+- 栈底：不允许插入和删除的一端
+- 空栈
+
+### 3.1 顺序栈
+
+使用静态数组实现，并需要记录栈顶指针
+
+设计方式(需要理解不同设计方式 的 不同代码实现)：
+
+- 初始化时 top=-1;
+- 初始化时 top=0;
+
+缺点：栈的大小不可变
+
+代码实现：
+
+​	**[SqStack.cpp]()**
+
+### 3.2 共享栈
+
+两个栈共享同一片内存空间
+
+代码实现：
+
+​	[ShStack.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/Stack/ShStack.cpp)
+
+### 3.3 链栈
+
+**链栈**相当于是**只能对头结点进行**后插和后删操作的**单链表**
+链头 = 栈顶
+
+推荐在实现链栈时使用不带头结点的单链表
+
+代码实现：
+
+​	**[LinkStack.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/Stack/LinkStack.cpp)**
