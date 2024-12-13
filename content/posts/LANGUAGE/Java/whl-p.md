@@ -1,5 +1,5 @@
 ---
-title: '期末JavaWeb作业模板'
+title: '期末JavaWeb作业模板 - 2024大三上'
 date: 2024-12-05T15:34:19+08:00
 draft: false
 ---
@@ -231,7 +231,7 @@ DataDao - 数据对象处理方法类
 在合适位置添加按钮
 
 ```html
-  <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"> <a href="javascript:;" onclick="data_add('添加','<%=Data.base_add_jsp%>')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a></span>
+<a href="javascript:;" onclick="data_add('添加','<%=Data.base_add_jsp%>')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a>
 ```
 
 
