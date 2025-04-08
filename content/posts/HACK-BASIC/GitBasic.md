@@ -94,7 +94,19 @@ git log
 git push --force origin main
 ```
 
-## 6 Git 代理设置
+## 6 其他基础命令
+
+```bash
+# 丢弃已修改但未暂存的所有更改
+git restore .
+
+# 清除所有未跟踪的文件（注意这会永久删除这些文件）（-f表示强制，-d表示包括目录）
+git clean -fd
+# 想确认一下哪些文件会被删除，可以先使用-n参数进行模拟
+git clean -fdn
+```
+
+## 7 Git 代理设置
 
 ### 设置代理
 
@@ -116,3 +128,23 @@ git config --global --get http.proxy
 git config --global --get https.proxy
 ```
 
+### 设置传输443端口
+
+若`git pull`时遇到 <u>ssh: connect to host github.com port 22: Connection refused</u> 的报错信息
+
+可能是22端口被防火墙屏蔽了，可以尝试GitHub的443端口
+
+````bash
+$ vim ~/.ssh/config
+```
+# Add section below to it
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+```
+$ ssh -T git@github.com
+Hi xxxxx! You've successfully authenticated, but GitHub does not
+provide shell access.
+````
+
+如果`~/.ssh`目录下没有config文件，新建一个即可
