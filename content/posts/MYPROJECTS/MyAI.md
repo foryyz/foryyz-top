@@ -116,7 +116,7 @@ v0.100→V0.111 - 2024-06-30 - [yyz]
 
 #### Vision_1
 
-![Vision_1](../asstes/MyAI/Vision_1.png)
+![Vision_1](../assets/MyAI/Vision_1.png)
 
 #### More_LLM
 
