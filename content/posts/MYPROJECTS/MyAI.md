@@ -33,7 +33,7 @@ tags: ['AI','foryyz']
 
 ## 1 核心更新内容
 
-![Update.png](../asstes/MyAI/Update.png)
+![Update.png](../assets/MyAI/Update.png)
 
 ### 1.1 检索模型的检索模式
 
@@ -108,11 +108,11 @@ v0.100→V0.111 - 2024-06-30 - [yyz]
 
 #### Extract Data Type
 
-![Extract_Data](../asstes/MyAI/Extract_Data.png)
+![Extract_Data](../assets/MyAI/Extract_Data.png)
 
 #### Query_1
 
-![Query_1](../asstes/MyAI/Query_1.png)
+![Query_1](../assets/MyAI/Query_1.png)
 
 #### Vision_1
 
@@ -120,8 +120,8 @@ v0.100→V0.111 - 2024-06-30 - [yyz]
 
 #### More_LLM
 
-![Many_LLM.png](../asstes/MyAI/Many_LLM.png)
+![Many_LLM.png](../assets/MyAI/Many_LLM.png)
 
 #### UI
 
-![UI](../asstes/MyAI/UI.png)
+![UI](../assets/MyAI/UI.png)

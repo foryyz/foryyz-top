@@ -92,5 +92,5 @@ b0.100	2024/11/14	yyz	*Push
 
 ## IMG
 
-![b0.115-1](../asstes/AutoDeployer/b0.115-1.png)
+![b0.115-1](../assets/AutoDeployer/b0.115-1.png)
 
