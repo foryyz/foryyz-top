@@ -9,6 +9,8 @@ tags: ['AI','foryyz']
 > 最后更新时间：2024/11/07
 >
 > 当前版本：V0.200
+>
+> 项目成员：yyz
 
 # My AI v0.2
 
@@ -23,7 +25,7 @@ tags: ['AI','foryyz']
 演示模型：llava-llama3:8B
 演示环境：**Ubuntu22.04 - wsl2**
 
-
+获奖经历：2024大学生创新训练项目省级
 
 ## 0 How To Run
 

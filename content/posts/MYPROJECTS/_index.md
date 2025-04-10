@@ -1,5 +1,5 @@
 ---
-title: "MyProjects - yyz个人开发项目"
+title: "MyProjects - yyz个人开发项目(全部原创)"
 # description: "AnyTHING"
 hidemeat: true #隐藏作者元信息
 #cover:
