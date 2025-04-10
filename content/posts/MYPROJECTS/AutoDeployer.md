@@ -15,7 +15,8 @@ tags: ["C++","yyz"]
 
 # AutoDeployer_Cpp
 
-**b0.1xx(第二迭代版本)** 开源python版本请前往：[[GitHub - foryyz/AutoDeployer]](https://github.com/foryyz/AutoDeployer)
+**b0.1xx(第二迭代版本)** 开源python版本代码请前往：[[GitHub - foryyz/AutoDeployer]](https://github.com/foryyz/AutoDeployer)
+	AutoDeployer_Python的说明文档已经删除...
 
 **项目目的：实现一键的全自动Windows环境部署**
 
