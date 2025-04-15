@@ -15,6 +15,7 @@ tags: ["Python","yyz"]
 
 **北京B&W公司科研计划**
 
-**项目目的：**实现对于锅炉零部件CAD图的路径自动识别、分组、计算求和、自动出图等功能
+**项目目的:** 实现对于锅炉零部件CAD图的路径自动识别、分组、计算求和、自动出图等功能
 
 更新日志 (Private)：https://github.com/foryyz/DxfReader/commits/main/
+

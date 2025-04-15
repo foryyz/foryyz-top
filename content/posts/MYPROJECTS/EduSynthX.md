@@ -15,7 +15,7 @@ tags: ['AI','JavaWeb','SSM','foryyz']
 >
 > 项目成员：yyz、凌嘉欣、杨旭、王馨宇、弓佳琪、纪俊羽、张瀚文
 
-# EduSynthX - 三体智教
+# EduSynthX
 
 **项目获奖经历：**2024计算机设计大赛省级二等奖
 

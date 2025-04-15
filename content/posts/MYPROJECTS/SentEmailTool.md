@@ -15,11 +15,11 @@ tags: ["Android","yyz","Java"]
 
 # SentWordEmailTool
 
-**项目目的：**应用于工厂内快捷排检文档的填报与传递与发送，集成完整的公司物联网生态
+**项目目的:** 应用于工厂内快捷排检文档的填报与传递与发送，集成完整的公司物联网生态
 
-**详细的更新日志及安装包下载：**https://github.com/foryyz/SentWordEmailTool/releases
+**详细的更新日志及安装包下载:** https://github.com/foryyz/SentWordEmailTool/releases
 
-**操作系统及开发环境：**
+**操作系统及开发环境:**
 
 SDK: Android 13+
 	(v0.0.3_Alpha后支持小米澎湃系统)
