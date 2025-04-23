@@ -104,6 +104,9 @@ git restore .
 git clean -fd
 # 想确认一下哪些文件会被删除，可以先使用-n参数进行模拟
 git clean -fdn
+
+# 查看提交记录
+git log --oneline
 ```
 
 ## 7 Git 代理设置
