@@ -4,7 +4,7 @@ title: 🫨 Here is yyz! # 站点标题
 copyright: "[©2024 foryyz's Blog](https://foryyz.top/)" # 网站的版权声明，通常显示在页脚
 theme: PaperMod # 主题
 languageCode: zh-cn # 语言
-paginate: 8 #每页个数
+paginate: 16 #每页个数
 
 enableInlineShortcodes: true #允许内联带代码
 hasCJKLanguage: true # 自动检测是否包含中文日文韩文,如果文章中使用了很多中文引号的话可以开启
