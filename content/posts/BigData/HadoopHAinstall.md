@@ -1,11 +1,11 @@
 ---
-title: 'Hadoop集群 HA高可用 CentOS7 完全分布式安装'
+title: 'Hadoop集群 完全分布式安装 (HA)'
 date: 2024-06-22T22:41:20+08:00
 draft: false
 tags: ['BigData','Hadoop']
 ---
 
-# Hadoop (HA高可用)完全分布式安装
+# Hadoop集群 (HA高可用) 完全分布式安装教程
 
 操作系统 - CentOS 7
 
@@ -19,6 +19,7 @@ CentOS 7 下载地址：[Index of /7.9.2009/isos/x86_64](https://vault.centos.or
 VMware 下载地址：[Fusion and Workstation | VMware](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
 
 **为VMware设置虚拟网络**
+	-> 编辑 -> 虚拟网络编辑器 -> 选中VMnet8 -> 更改设置 -> NAT模式; 子网ip 改为192.168.170.0
 
 
 
@@ -35,6 +36,8 @@ SYSTEM区会有感叹号提示, 点击"INSTALLATION DESTINATION"后点击左上�
 -> Begin Installation 开始安装
 -> 点击 "ROOT PASSWORD" 设置root用户密码
 -> Reboot
+
+
 
 ## 2 配置Hostname、IP、防火墙
 
@@ -244,6 +247,8 @@ server.2=hadoop102:2888:3888
 server.3=hadoop103:2888:3888
 ```
 
+
+
 ## 6 安装Hadoop
 
 Hadoop下载地址 [Apache Hadoop](https://hadoop.apache.org/releases.html)
@@ -287,6 +292,8 @@ export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ```
 
 ​	使用 `source /etc/profile.d/my_env.sh` 激活
+
+
 
 ## 7 编辑Hadoop配置文件
 
@@ -548,6 +555,8 @@ hadoop103
 </configuration>
 ```
 
+
+
 ## 8 克隆虚拟机
 
 此时可以关闭虚拟机，保存快照，**完整克隆**2次虚拟机 分别为hadoop102、hadoop103
@@ -568,6 +577,8 @@ systemctl restart network
 # 重启电脑
 reboot
 ```
+
+
 
 ## 9 配置免密登录
 
@@ -590,6 +601,8 @@ scp -r ~/.ssh/ root@hadoop102:~/
 scp -r ~/.ssh/ root@hadoop103:~/
 ```
 
+
+
 ## 10 配置zookeeper myid
 
 **hadoop101**
@@ -609,6 +622,8 @@ echo 2 > /home/zookeeper/data/myid
 ```bash
 echo 3 > /home/zookeeper/data/myid
 ```
+
+
 
 ## 11 Hadoop初始化
 
@@ -676,6 +691,8 @@ stop-dfs.sh
 ```
 
 到此，Hadoop HA 集群就已经部署完毕了！
+
+
 
 ## 12 开启与关闭集群
 
