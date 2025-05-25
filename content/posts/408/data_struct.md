@@ -436,6 +436,58 @@ L = (a1, a2, ... , ai, a(i+1), ... , an )
 
 
 
+## 6 串
+
+串：即字符串，由零个或多个字符组成的有限序列
+
+子串：串中任意个**连续的**字符组成的子序列
+
+定义方式：[顺序存储.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/6%20%E4%B8%B2/%E9%A1%BA%E5%BA%8F%E5%AD%98%E5%82%A8.cpp)
+
+### 6.1 朴素模式匹配算法
+
+在主串中找到与模式串相同的子串, 并返回其所在位置
+
+思路：暴力匹配
+
+代码实现：
+
+​	[朴素模式匹配.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/6%20%E4%B8%B2/%E6%9C%B4%E7%B4%A0%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D.cpp)
+
+### 6.2 KMP算法
+
+时间复杂度：
+	最坏时间复杂度 O(m+n)
+	其中，求next数组时间复杂度 O(m)，模式匹配过程最坏时间复杂度 O(n)
+
+思路
+
+- 根据模式串T，求出next数组
+- 利用next数组进行匹配 (主串指针不回溯)
+
+考点1. 模式匹配过程代码实现：
+
+​	[KMP算法.cpp](https://github.com/foryyz/Programming-Basic-Projects/blob/main/Data_Struct_408/6%20%E4%B8%B2/KMP%E7%AE%97%E6%B3%95.cpp)
+
+考点2. 求模式串的next数组 (手算)
+	next[1] = 0, next[2] = 1
+
+### 6.3 KMP算法优化
+
+优化思路：优化next数组，模式匹配过程代码不改动
+
+考点 由next数组 求 nextval数组
+```cpp
+nextval[1] = 0;
+for (int j=2; j<=T.length; j++){
+  if (T.ch[next[j]] == T.ch[j]){
+    nextval[j] = nextval[next[j]];
+  }else{
+    nextval[j] = next[j];
+  }
+}
+```
+
 
 
 
