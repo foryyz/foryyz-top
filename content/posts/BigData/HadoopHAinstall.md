@@ -8,6 +8,7 @@ tags: ['BigData','Hadoop']
 # Hadoop集群 (HA高可用) 完全分布式安装教程
 
 操作系统 - CentOS 7
+集群昵称 - hadoopCluster
 
 ## 0 环境准备
 
