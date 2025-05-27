@@ -1,9 +1,8 @@
 ---
-title: 'HIVE 安装'
+title: 'Hive 安装与配置'
 date: 2024-06-22T22:41:20+08:00
 draft: false
-tags: ['BigData','Hadoop','Flume']
-
+tags: ['BigData','Hadoop','Hive']
 ---
 
 # HIVE
