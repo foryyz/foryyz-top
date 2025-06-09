@@ -153,3 +153,25 @@ schematool -initSchema -dbType mysql -verbose
 
 执行完成后 出现 "Initialization script completed"，此时mysql中就已被自动创建了 hive 数据库
 
+## 4 启动 Hive
+
+方式1 - 前台启动
+
+```bash
+hive --service metastore
+hive --service hiveserver2
+```
+
+方式2 - 后台启动
+
+```bash
+hive --service metastore &
+hive --service hiveserver2 &
+```
+
+远程连接：
+
+```bash
+beeline -u jdbc:hive2://IP地址:10000 -n root
+```
+
