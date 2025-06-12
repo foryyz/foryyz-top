@@ -1,6 +1,6 @@
 ---
 title: 'Hive 安装与配置'
-date: 2024-06-22T22:41:20+08:00
+date: 2025-05-20T22:00:20+08:00
 draft: false
 tags: ['BigData','Hadoop','Hive']
 ---
