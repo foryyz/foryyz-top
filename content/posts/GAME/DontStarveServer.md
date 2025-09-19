@@ -1,5 +1,5 @@
 ---
-title: '饥荒联机版服务器搭建教程(Ubuntu22)'
+title: '饥荒联机版服务器搭建教程(Mac || Ubuntu22)'
 date: 2024-06-25T22:45:11+08:00
 draft: false
 tags: ['GAME']
@@ -26,12 +26,28 @@ pds-xxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ```
 // Mod对应 id
-458587300 - 攻击范围显示
-375850593 - 护身符和背包栏
 378160973 - 全球定位
-375859599 - 血量显示
-2287303119 - Show Me
-458587300 - 木牌传送
+362175979 - 虫洞标记
+2477889104 - 驯牛信息
+2823530744 - 背包栏位
+2189004162 - Insight (ShowMe+)
+1207269058 - 简易血条
+1185229307 - 史诗血量条
+2119742489 - 木牌传送
+2505341606 - 防卡两招
+1595631294 - 箱子小木牌
+
+// 将下面放在mods/dedicated_server_mods_setup.lua中实现自动安装更新mod
+ServerModSetup("378160973")
+ServerModSetup("362175979")
+ServerModSetup("2477889104")
+ServerModSetup("2823530744")
+ServerModSetup("2189004162")
+ServerModSetup("1207269058")
+ServerModSetup("1185229307")
+ServerModSetup("2119742489")
+ServerModSetup("2505341606")
+ServerModSetup("1595631294")
 ```
 
 5️⃣ Steam下载开服工具 [Don't Starve Together Dedicated Server]
