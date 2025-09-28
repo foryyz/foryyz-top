@@ -1,5 +1,5 @@
 ---
-title: 'Hadoop集群 完全分布式安装 (HA)'
+title: '(CentOS) Hadoop集群 完全分布式安装 (HA)'
 date: 2025-05-20T22:00:20+08:00
 draft: false
 tags: ['BigData','Hadoop']
