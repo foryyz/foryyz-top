@@ -35,3 +35,54 @@ hugo
 hugo env
 ```
 
+## 简单的密码功能
+
+(静态博客只能实现伪加密，查看html源代码就能看到文章内容)
+
+在`layouts/_default/single.html`的.Content段替换
+
+```html
+{{- if .Content }}
+<div class="post-content">
+  {{- if not (.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" .Content -}}
+  {{- else }}{{ .Content }}{{ end }}
+</div>
+{{- end }}
+
+替换为：
+
+{{- $password := .Params.password | default "" -}}
+{{- if .Content }}
+<div class="post-content" id="post-content" style="display:none;">
+  {{- if not (.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" .Content -}}
+  {{- else }}{{ .Content }}{{ end }}
+</div>
+
+{{- if ne $password "" }}
+<script>
+(function() {
+    var input = prompt("请输入文章密码：");
+    if (input === "{{ $password }}") {
+        document.getElementById("post-content").style.display = "block";
+    } else {
+        alert("密码错误！");
+        if (history.length <= 1) {
+            window.location.href = "/";
+        } else {
+            history.back();
+        }
+    }
+})();
+</script>
+{{- else }}
+<script>
+    // 没有设置密码的文章直接显示
+    document.getElementById("post-content").style.display = "block";
+</script>
+{{- end }}
+{{- end }}
+```
+
+之后只要在文章的头部加上 `password: xxxxx` 字段即可
