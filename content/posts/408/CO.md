@@ -2,7 +2,6 @@
 title: '计算机组成原理'
 date: 2025-09-23T11:13:20+08:00
 draft: false
-password: foryyz
 ---
 
 # 计算机组成原理

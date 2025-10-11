@@ -7,37 +7,48 @@ tags: ['GAME']
 
 # Don't Starve Together
 
-## MAC系统开服教程
+Last Update Time - 2025/10/06 - 02:33
 
-### 1 开启在线服务器
+## MAC
 
-1️⃣ 饥荒联机版游戏启动并登入后, 点击 [账户], 会跳转到网页
+1️⃣ 饥荒联机版游戏启动并登入后, 点击左下角 [账户], 会跳转到网页,**保存[Klei用户ID]** (KU_XXXXXXX); 
 
-2️⃣ 保存[Klei用户ID] (KU_XXXXXXX)
+2️⃣ 点击网页菜单栏的 [游戏] [添加新服务器] [配置服务器]
 
-3️⃣ 点击菜单栏的 [游戏] [添加新服务器] [配置服务器]
-
-``` 
+```
 // 保存服务器票据
 pds-xxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-4️⃣ 创建存档 设置MOD
+3️⃣ 在饥荒联机版游戏中**创建存档**, 设置Mod. 将存档文件(/User/yyz/Documents/Klei/DoNotStarveTogether/xxx数字idxxx/Cluster_1)**拷贝到**他的**上一层级目录**(/User/yyz/Documents/Klei/DoNotStarveTogether)
+
+<!--后续创建的开服脚本会自动寻找"/User/yyz/Documents/Klei/DoNotStarveTogether/Cluster_1"目录-->
+
+4️⃣ 在刚才拷贝的存档文件夹中创建文件 **cluster_token.txt**, 并在其中填入服务器票据pds-xxxxx
+
+5️⃣ 在刚才拷贝的存档文件夹中创建文件 **adminlist.txt**, 并在其中填入Klei用户id
+
+<!--可以通过MAC自带的[文本编辑]软件创建txt文件编写,填写完成后 点击菜单栏的格式,制作纯文本,保存即可.-->
+
+6️⃣ Steam下载开服工具 [Don't Starve Together Dedicated Server]
+
+右键浏览 开服工具 本地文件 -> 进入App包内容 -> 进去Contents文件夹 -> 右键[MacOS]文件夹, 制作替身 -> 将快捷方式放到桌面
+
+右键[MacOS]文件夹 -> 新建终端 -> 在终端输入>>>
+
+```bash
+# 建立主服务器脚本
+echo "./dontstarve_dedicated_server_nullrenderer -console -cluster Cluster_1 -shard Master" > master_start.sh
+# 建立洞穴服务器脚本
+echo "./dontstarve_dedicated_server_nullrenderer -console -cluster Cluster_1 -shard Caves" > cave_start.sh
+# 设置脚本权限
+chmod +x master_start.sh cave_start.sh
+```
+
+7️⃣ **设置Mod**. 进入开服工具目录 -> 进入Contents文件夹
 
 ```
-// Mod对应 id
-378160973 - 全球定位
-362175979 - 虫洞标记
-2477889104 - 驯牛信息
-2823530744 - 背包栏位
-2189004162 - Insight (ShowMe+)
-1207269058 - 简易血条
-1185229307 - 史诗血量条
-2119742489 - 木牌传送
-2505341606 - 防卡两招
-1595631294 - 箱子小木牌
-
-// 将下面放在mods/dedicated_server_mods_setup.lua中实现自动安装更新mod
+// 将下面追加书写到服务端文件目录下的 mods/dedicated_server_mods_setup.lua中实现自动安装更新mod
 ServerModSetup("378160973")
 ServerModSetup("362175979")
 ServerModSetup("2477889104")
@@ -50,24 +61,7 @@ ServerModSetup("2505341606")
 ServerModSetup("1595631294")
 ```
 
-5️⃣ Steam下载开服工具 [Don't Starve Together Dedicated Server]
-
-右键浏览 开服工具 本地文件 -> 进入App包内容 -> 进去Contents文件夹 -> 右键[MacOS] 和 [mods] 两个文件夹, 制作替身 -> 将两个快捷方式放到桌面
-
-6️⃣ 右键浏览 饥荒联机版 本地文件 -> 将Contents下mods文件夹内的所有内容 拷贝 到开服工具的mods文件夹中 选择[替换]
-
-7️⃣ 右键MacOS替身 新建终端 在终端输入>>>
-
-```bash
-# 建立主服务器脚本
-echo "./dontstarve_dedicated_server_nullrenderer -console -cluster Cluster_1 -shard Master" > master_start.sh
-# 建立洞穴服务器脚本
-echo "./dontstarve_dedicated_server_nullrenderer -console -cluster Cluster_1 -shard Caves" > cave_start.sh
-# 设置脚本权限
-chmod +x master_start.sh cave_start.sh
-```
-
-8️⃣ 启动服务器
+8️⃣ **开服** 右键[MacOS]的替身 -> 新建终端 -> 在终端输入>>>
 
 ```bash
 ./master_start.sh
@@ -76,7 +70,7 @@ chmod +x master_start.sh cave_start.sh
 # 关闭服务器只需要Ctrl+C
 ```
 
-注：可能会出现 Don't Starve Together Dedicated Server.app 已损坏的报错，需要进入 [系统设置] -> [隐私与安全性] -> 最下方[安全性] 允许开服工具的打开
+**注：**可能会出现 Don't Starve Together Dedicated Server.app 已损坏的报错，需要进入 [系统设置] -> [隐私与安全性] -> 最下方[安全性] 允许开服工具的打开
 
 参考教程 : https://www.bilibili.com/video/BV1o34y1s7A6
 
@@ -199,8 +193,6 @@ UDP协议开放10888、10998、10999
 
 TCP和UDP协议开放8767、27017
 
-
-
 ### 7 启动服务器
 
 ```bash
@@ -218,3 +210,22 @@ tail -f root.log
 #服务器性能查看
 top
 ```
+
+
+
+## MOD List
+
+```
+// Mod对应 id
+378160973 - 全球定位
+362175979 - 虫洞标记
+2477889104 - 驯牛信息
+2823530744 - 背包栏位
+2189004162 - Insight (ShowMe+)
+1207269058 - 简易血条
+1185229307 - 史诗血量条
+2119742489 - 木牌传送
+2505341606 - 防卡两招
+1595631294 - 箱子小木牌
+```
+

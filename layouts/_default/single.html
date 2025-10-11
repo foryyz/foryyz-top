@@ -47,7 +47,7 @@
 {{- if ne $password "" }}
 <script>
 (function() {
-    var input = prompt("请输入文章密码：");
+    var input = prompt("这是一篇私密文章! 请输入文章密码：");
     if (input === "{{ $password }}") {
         document.getElementById("post-content").style.display = "block";
     } else {
