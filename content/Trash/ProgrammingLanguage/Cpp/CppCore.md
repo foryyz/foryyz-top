@@ -1,5 +1,5 @@
 ---
-title: 'C++ - 核心编程'
+title: 'C++ 2 - 核心编程'
 date: 2024-09-22T20:34:00+08:00
 draft: false
 tags: ['C++']

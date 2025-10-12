@@ -1,5 +1,5 @@
 ---
-title: 'C++ - 基础语法'
+title: 'C++ 1 - 基础语法'
 date: 2024-06-22T16:34:00+08:00
 draft: false
 tags: ['C++']

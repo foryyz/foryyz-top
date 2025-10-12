@@ -1,5 +1,5 @@
 ---
-title: 'C++ - 一些神奇操作'
+title: 'C++ - 一些操作'
 date: 2024-11-14T23:43:17+08:00
 draft: false
 tags: ['C++']

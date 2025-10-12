@@ -104,7 +104,7 @@ params:
   profileMode:
     enabled: true # needs to be explicitly set
     title: 🫨Edit My Life.
-    subtitle: "😍 Hope Y😶U HappY🤩! EveRyDay-z🧸"
+    subtitle: "😍 Hope Y😶U HappY🤩! EveRyDay-z🧸 (部分文章已迁移至Obsidian)"
     imageUrl: "img/head.jpg"
     imageWidth: 120
     imageHeight: 120
