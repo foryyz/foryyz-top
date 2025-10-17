@@ -40,6 +40,8 @@ docker run [name]
 
 ## MySQL in Docker
 
+方式1.
+
 ```bash
 docker run -d \
   --name mysql57 \
@@ -56,3 +58,37 @@ docker run -d \
 # mysql:5.7：指定镜像
 ```
 
+方式2.
+
+MacOS, 安装mysql8
+
+在某位置创建 `docker-compose.yml`
+
+```yml
+# 新版本的docker-compose可以删除这一行
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+```
+
+| **操作**             | **命令**                                 |
+| -------------------- | ---------------------------------------- |
+| 启动 MySQL           | docker-compose up -d                     |
+| 停止 MySQL           | docker-compose down                      |
+| 查看日志             | docker logs mysql                        |
+| 进入 MySQL 命令行    | docker exec -it mysql mysql -u root -p   |
+| 删除容器但保留数据   | docker-compose down                      |
+| 删除数据（彻底清空） | docker volume rm docker-mysql_mysql_data |
