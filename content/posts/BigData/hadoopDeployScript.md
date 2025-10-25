@@ -1,5 +1,5 @@
 ---
-title: 'Hadoop自动部署脚本'
+title: '(更新中)Hadoop自动部署脚本'
 date: 2025-09-26T22:00:03+08:00
 draft: false
 Tags: ['Hadoop', 'Script']

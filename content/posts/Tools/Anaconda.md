@@ -142,6 +142,15 @@ conda clean -y --all
 
 `conda config --show channels`  - 显示当前的镜像路径
 
+`conda config --remove-key channels` - 删除之前添加的所有镜像源（如清华源等），恢复为anaconda默认的镜像源
+
+#### Mac
+
+```shell
+# 配置conda-forge源
+conda config --add channels conda-forge
+```
+
 #### Linux
 
 ```bash
@@ -168,7 +177,6 @@ channels:
 show_channel_urls: true
 auto_activate_base: false  #关闭自动激活状态
 #其他相关
-conda config --remove-key channels   换回conda默认源，在出现一些故障时可以使用
 conda config --show-sources   找到.condac文件并查看里面的镜像源
 ```
 
