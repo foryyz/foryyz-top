@@ -1,6 +1,6 @@
 ---
-title: '一个基于selenium的半自动淘宝爬虫脚本'
-date: 2025-09-26T22:00:03+08:00
+title: '[淘宝爬虫]2026可用的淘宝爬虫脚本'
+date: 2026-01-05T22:00:03+08:00
 draft: false
 Tags: ['Crawler', 'Script']
 ---
@@ -15,7 +15,7 @@ Tags: ['Crawler', 'Script']
 
 ## 运行方法
 
-1. 下载自己浏览器对应的selenium webdriver内核，替换**run.py**中的`EDGE_DRIVER_PATH`参数 （不懂问大模型）
+1. 下载自己浏览器对应的selenium webdriver内核，替换**run.py**中的`EDGE_DRIVER_PATH`参数 （这里不懂问大模型）
 2. **执行run.py**，第一次执行需要手动登陆，登陆后在终端输入save保存cookie，这样以后使用程序就能自动登录了
 3. 登陆完成后 在浏览器手动搜索商品（请确保商品不止一页数据）
 4. 搜索完成后**在终端输入start**和爬取的页数, 程序会自动完成翻页 保存渲染的html文件
