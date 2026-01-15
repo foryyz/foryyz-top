@@ -1,5 +1,5 @@
 ---
-title: 'Ollama - 安装与基本使用'
+title: 'Ollama'
 date: 2024-06-22T15:01:31+08:00
 draft: false
 tags: ['AI','LLM','Ollama']

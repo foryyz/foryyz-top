@@ -1,5 +1,5 @@
 ---
-title: 'Anaconda - 安装与基本使用'
+title: 'Anaconda'
 date: 2024-06-22T14:34:00+08:00
 draft: false
 tags: ['Python','Anaconda']

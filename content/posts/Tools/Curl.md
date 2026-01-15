@@ -1,8 +1,14 @@
 ---
-title: 'Curl命令 - 前后端连接基础'
+title: 'Curl命令'
 date: 2024-11-16T16:06:09+08:00
 draft: false
 ---
+
+> Author - yyz
+>
+> Create Time - 2024/11/16
+>
+> **Last Update Time - 2024/11/16**
 
 # Curl
 

@@ -1,5 +1,5 @@
 ---
-title: 'Git - 基本使用方法'
+title: 'Git'
 date: 2024-06-06T09:39:23+08:00
 draft: false
 tags: ['Git']

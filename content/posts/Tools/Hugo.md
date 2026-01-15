@@ -1,5 +1,5 @@
 ---
-title: 'HugoUse'
+title: 'Hugo'
 date: 2025-04-08T22:54:20+08:00
 draft: false
 tags: ['Hugo']
