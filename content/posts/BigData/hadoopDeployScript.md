@@ -15,7 +15,7 @@ https://github.com/foryyz/HadoopDeploymentScript
 
 ### 0 虚拟机安装Ubuntu 24 & 设置ip段
 
-**Ubuntu24LTS镜像下载地址：** https://mirrors.aliyun.com/ubuntu-releases/24.04/ubuntu-24.04.3-desktop-amd64.iso
+**Ubuntu24LTS 清华镜像下载地址：** https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/noble/ubuntu-24.04.3-desktop-amd64.iso
 
 用户名使用hadoop，主机名使用node
 
