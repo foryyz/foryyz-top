@@ -5,7 +5,11 @@ draft: false
 Tags: ['Hadoop', 'Script']
 ---
 
-# Hadoop自动化部署shell脚本
+> Writing Time - 2025/09/26
+>
+> Last Update Time - 2026/01/31
+
+---
 
 本项目用于在 **Ubuntu 24**（VMware 完整克隆的三台虚拟机）上自动部署 **3 节点完全分布式 Hadoop 集群**：
 
