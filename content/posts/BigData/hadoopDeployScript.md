@@ -1,5 +1,5 @@
 ---
-title: '(更新中)Hadoop自动部署脚本'
+title: 'Hadoop3自动部署脚本'
 date: 2025-09-26T22:00:03+08:00
 draft: false
 Tags: ['Hadoop', 'Script']
@@ -12,6 +12,13 @@ Tags: ['Hadoop', 'Script']
 https://github.com/foryyz/HadoopDeploymentScript
 
 ## 运行方式
+
+#### 0 虚拟机安装Ubuntu 24 & 设置ip段
+
+**Ubuntu24LTS镜像下载地址：** https://mirrors.aliyun.com/ubuntu-releases/24.04/ubuntu-24.04.3-desktop-amd64.iso
+
+用户名使用hadoop，主机名使用node
+
 #### 1 把三个文件拷贝到同目录
 - `cluster.conf`
 - `set-static-ip.sh`
@@ -20,7 +27,10 @@ https://github.com/foryyz/HadoopDeploymentScript
 ```sh
 chmod +x set-static-ip.sh install-hadoop-ubuntu24.sh
 ```
-#### 3 按顺序执行文件
+#### 3 完整克隆后打开各虚拟机
+
+#### 4 按顺序执行文件
+
 master
 ```sh
 sudo ./set-static-ip.sh master
@@ -38,21 +48,6 @@ master
 sudo ./install-hadoop-ubuntu24.sh master
 ```
 
-## 操作系统与环境
-Ubuntu 24
-Hadoop 3.4.2
-
-## 集群规划
-Master
-- HDFS: NameNode
-- YARN: ResourceManager
-- MapReduce: JobHistoryServer
-## IP 规划
-IP段 - 192.168.120.x
-Master - 192.168.120.10
-Worker1 - 192.168.120.11
-Worker2 - 192.168.120.12
-
 ## 代码
 
 ##### install-hadoop-ubuntu24.sh
@@ -61,9 +56,12 @@ Worker2 - 192.168.120.12
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Usage:
+#   sudo ./install-hadoop-ubuntu24.sh master  [--conf /path/cluster.conf]
+#   sudo ./install-hadoop-ubuntu24.sh worker  [--conf /path/cluster.conf]
+
 ROLE="${1:-}"
 shift || true
-
 CONF_PATH="./cluster.conf"
 
 usage() {
@@ -103,7 +101,8 @@ done
 ensure_packages() {
   log "Installing base packages..."
   apt-get update -y
-  apt-get install -y openssh-server openssh-client rsync curl wget tar net-tools
+  apt-get install -y rsync curl wget tar net-tools
+  # NOTE: ssh is expected to be installed by set-static-ip.sh on all nodes
 }
 
 disable_ufw() {
@@ -142,18 +141,47 @@ download_and_install_jdk() {
     log "JDK already installed at ${JDK_DIR}"
     return
   fi
+
   log "Downloading JDK..."
   mkdir -p /tmp/hadoop_setup
   cd /tmp/hadoop_setup
+  rm -f jdk8.tar.gz
   wget -O jdk8.tar.gz "${JDK_DOWNLOAD_LINK}"
+
   log "Installing JDK to ${JDK_DIR}..."
-  rm -rf "${JDK_DIR}"
   mkdir -p "${INSTALL_BASE}"
-  tar -xzf jdk8.tar.gz -C "${INSTALL_BASE}"
+
+  # 解压到临时目录，避免直接污染 /opt
+  local extract_dir="/tmp/jdk_extract_$$"
+  rm -rf "${extract_dir}"
+  mkdir -p "${extract_dir}"
+
+  tar -xzf jdk8.tar.gz -C "${extract_dir}"
+
+  # 找到解压后的顶层目录（只取第一层目录）
   local top
-  top="$(tar -tzf jdk8.tar.gz | head -1 | cut -d/ -f1)"
+  top="$(find "${extract_dir}" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+
+  if [[ -z "${top}" || ! -d "${top}" ]]; then
+    echo "[ERROR] JDK extraction failed: top directory not found in ${extract_dir}" >&2
+    tar -tzf jdk8.tar.gz | head -n 20 >&2 || true
+    rm -rf "${extract_dir}"
+    exit 1
+  fi
+
+  # 原子替换：先删旧的，再移动新的
   rm -rf "${JDK_DIR}"
-  mv "${INSTALL_BASE}/${top}" "${JDK_DIR}"
+  mv "${top}" "${JDK_DIR}"
+
+  rm -rf "${extract_dir}"
+
+  # 兜底校验
+  if [[ ! -x "${JDK_DIR}/bin/java" ]]; then
+    echo "[ERROR] JDK install seems incomplete: ${JDK_DIR}/bin/java not found/executable" >&2
+    exit 1
+  fi
+
+  log "JDK installed OK: $(${JDK_DIR}/bin/java -version 2>&1 | head -n 1)"
 }
 
 download_and_install_hadoop() {
@@ -161,17 +189,43 @@ download_and_install_hadoop() {
     log "Hadoop already installed at ${HADOOP_DIR}"
     return
   fi
+
   log "Downloading Hadoop..."
   mkdir -p /tmp/hadoop_setup
   cd /tmp/hadoop_setup
+  rm -f hadoop.tar.gz
   wget -O hadoop.tar.gz "${HADOOP_DOWNLOAD_LINK}"
+
   log "Installing Hadoop to ${HADOOP_DIR}..."
-  rm -rf "${HADOOP_DIR}"
   mkdir -p "${INSTALL_BASE}"
-  tar -xzf hadoop.tar.gz -C "${INSTALL_BASE}"
+
+  local extract_dir="/tmp/hadoop_extract_$$"
+  rm -rf "${extract_dir}"
+  mkdir -p "${extract_dir}"
+
+  tar -xzf hadoop.tar.gz -C "${extract_dir}"
+
   local top
-  top="$(tar -tzf hadoop.tar.gz | head -1 | cut -d/ -f1)"
-  mv "${INSTALL_BASE}/${top}" "${HADOOP_DIR}"
+  top="$(find "${extract_dir}" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+
+  if [[ -z "${top}" || ! -d "${top}" ]]; then
+    echo "[ERROR] Hadoop extraction failed: top directory not found in ${extract_dir}" >&2
+    tar -tzf hadoop.tar.gz | head -n 20 >&2 || true
+    rm -rf "${extract_dir}"
+    exit 1
+  fi
+
+  rm -rf "${HADOOP_DIR}"
+  mv "${top}" "${HADOOP_DIR}"
+
+  rm -rf "${extract_dir}"
+
+  if [[ ! -x "${HADOOP_DIR}/bin/hdfs" ]]; then
+    echo "[ERROR] Hadoop install seems incomplete: ${HADOOP_DIR}/bin/hdfs not found/executable" >&2
+    exit 1
+  fi
+
+  log "Hadoop installed OK: $(${HADOOP_DIR}/bin/hadoop version 2>/dev/null | head -n 1 || true)"
 }
 
 write_env() {
@@ -346,7 +400,7 @@ EOF
 }
 
 setup_ssh_keys_master() {
-  log "Setting up passwordless SSH for ${HADOOP_USER} on master..."
+  log "Setting up SSH key for ${HADOOP_USER} on master..."
   sudo -u "${HADOOP_USER}" mkdir -p "/home/${HADOOP_USER}/.ssh"
   sudo -u "${HADOOP_USER}" chmod 700 "/home/${HADOOP_USER}/.ssh"
   if [[ ! -f "/home/${HADOOP_USER}/.ssh/id_rsa" ]]; then
@@ -357,17 +411,21 @@ setup_ssh_keys_master() {
 }
 
 distribute_to_workers_master() {
-  log "Distributing JDK/Hadoop/config to workers (via root ssh/scp)..."
+  log "Distributing to workers via ${ADMIN_USER}@<ip> ..."
   local tarball="/tmp/hadoop_dist.tar.gz"
   tar -czf "${tarball}" -C / "${JDK_DIR#/}" "${HADOOP_DIR#/}" "etc/profile.d/hadoop_env.sh"
 
   for ip in ${WORKERS_IPS}; do
     log "==> Sending to ${ip}"
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${0}" "root@${ip}:/root/install-hadoop-ubuntu24.sh"
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${CONF_PATH}" "root@${ip}:/root/cluster.conf"
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${tarball}" "root@${ip}:/tmp/hadoop_dist.tar.gz"
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "root@${ip}" \
-      "bash /root/install-hadoop-ubuntu24.sh worker --conf /root/cluster.conf"
+
+    # Copy scripts+conf into admin user's home; tarball into /tmp
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${0}" "${ADMIN_USER}@${ip}:/home/${ADMIN_USER}/install-hadoop-ubuntu24.sh"
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${CONF_PATH}" "${ADMIN_USER}@${ip}:/home/${ADMIN_USER}/cluster.conf"
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${tarball}" "${ADMIN_USER}@${ip}:/tmp/hadoop_dist.tar.gz"
+
+    # Remote run with sudo
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${ADMIN_USER}@${ip}" \
+      "sudo bash /home/${ADMIN_USER}/install-hadoop-ubuntu24.sh worker --conf /home/${ADMIN_USER}/cluster.conf"
   done
 
   rm -f "${tarball}"
@@ -392,6 +450,11 @@ main() {
   need_root
   load_conf
 
+  # Basic sanity check
+  if [[ -z "${ADMIN_USER:-}" ]]; then
+    err "ADMIN_USER is empty in cluster.conf"
+  fi
+
   ensure_packages
   disable_ufw
   ensure_user
@@ -406,7 +469,7 @@ main() {
     write_hadoop_configs_master
     setup_ssh_keys_master
 
-    log "NOTE: first distribution may ask for worker root passwords during ssh/scp."
+    log "NOTE: first distribution may ask for ${ADMIN_USER} password on workers (scp/ssh)."
     distribute_to_workers_master
     format_namenode_master
 
@@ -416,9 +479,13 @@ main() {
     log "  start-yarn.sh"
     log "  mapred --daemon start historyserver"
     log "  jps"
+    log "Web UIs:"
+    log "  NameNode:        http://${MASTER_HOST}:9870"
+    log "  ResourceManager: http://${MASTER_HOST}:8088"
+    log "  HistoryServer:   http://${MASTER_HOST}:19888"
   else
     unpack_dist_worker
-    # fallback download if dist missing
+    # fallback downloads if tarball missing
     download_and_install_jdk || true
     download_and_install_hadoop || true
     write_env
@@ -430,7 +497,6 @@ main() {
 }
 
 main
-
 ```
 
 ##### set-static-ip.sh
@@ -440,16 +506,12 @@ main
 set -euo pipefail
 
 # Usage:
-#   sudo ./set-static-ip.sh master
-#   sudo ./set-static-ip.sh worker1
-#   sudo ./set-static-ip.sh worker2
-#
-# Optional:
-#   sudo ./set-static-ip.sh master --conf /opt/cluster/cluster.conf
+#   sudo ./set-static-ip.sh master   [--conf /path/cluster.conf]
+#   sudo ./set-static-ip.sh worker1  [--conf /path/cluster.conf]
+#   sudo ./set-static-ip.sh worker2  [--conf /path/cluster.conf]
 
 ROLE="${1:-}"
 shift || true
-
 CONF_PATH="./cluster.conf"
 
 usage() {
@@ -460,6 +522,16 @@ usage() {
 need_root() {
   if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
     echo "[ERROR] Please run as root (sudo)." >&2
+    exit 1
+  fi
+}
+
+load_conf() {
+  if [[ -f "${CONF_PATH}" ]]; then
+    # shellcheck disable=SC1090
+    source "${CONF_PATH}"
+  else
+    echo "[ERROR] cluster.conf not found: ${CONF_PATH}" >&2
     exit 1
   fi
 }
@@ -479,10 +551,8 @@ detect_iface() {
   local iface
   iface="$(ip -4 route show default 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')"
   [[ -n "${iface}" ]] && { echo "${iface}"; return 0; }
-
   iface="$(ip -o -4 addr show | awk '$2!="lo"{print $2; exit}')"
   [[ -n "${iface}" ]] && { echo "${iface}"; return 0; }
-
   echo ""
   return 1
 }
@@ -497,6 +567,39 @@ backup_netplan() {
   ts="$(date +%Y%m%d-%H%M%S)"
   cp -a /etc/netplan "/root/netplan-backup/netplan-${ts}" 2>/dev/null || true
   echo "[INFO] Backup: /root/netplan-backup/netplan-${ts}"
+}
+
+ensure_ssh_service() {
+  echo "[INFO] Ensuring SSH is installed and running..."
+  apt-get update -y
+  apt-get install -y openssh-server openssh-client
+
+  systemctl enable ssh || true
+  systemctl start ssh || true
+
+  if ! systemctl is-active --quiet ssh; then
+    echo "[ERROR] ssh service is not active. Run: systemctl status ssh" >&2
+    exit 1
+  fi
+  echo "[INFO] SSH is active."
+}
+
+ensure_admin_user_sudo() {
+  local user="${ADMIN_USER:-}"
+  if [[ -z "${user}" ]]; then
+    echo "[WARN] ADMIN_USER not set in cluster.conf; skip sudo setup."
+    return 0
+  fi
+  if ! id "${user}" >/dev/null 2>&1; then
+    echo "[ERROR] ADMIN_USER=${user} does not exist on this node. Create it during Ubuntu install." >&2
+    exit 1
+  fi
+  echo "[INFO] Ensuring ${user} has passwordless sudo..."
+  usermod -aG sudo "${user}" || true
+  cat > "/etc/sudoers.d/99-${user}-nopasswd" <<EOF
+${user} ALL=(ALL) NOPASSWD:ALL
+EOF
+  chmod 440 "/etc/sudoers.d/99-${user}-nopasswd"
 }
 
 set_hostname() {
@@ -565,16 +668,6 @@ apply_netplan() {
   echo "[INFO] Netplan applied."
 }
 
-load_conf() {
-  if [[ -f "${CONF_PATH}" ]]; then
-    # shellcheck disable=SC1090
-    source "${CONF_PATH}"
-  else
-    echo "[ERROR] cluster.conf not found: ${CONF_PATH}" >&2
-    exit 1
-  fi
-}
-
 # parse args
 [[ "${ROLE}" == "master" || "${ROLE}" == "worker1" || "${ROLE}" == "worker2" ]] || usage
 while [[ $# -gt 0 ]]; do
@@ -588,9 +681,13 @@ main() {
   need_root
   load_conf
 
-  local host="" ip="" cidr="${CIDR:-24}" dns="${DNS:-8.8.8.8,114.114.114.114}"
+  # ensure ssh + sudo first (so master can later ssh into workers)
+  ensure_ssh_service
+  ensure_admin_user_sudo
+
+  local host="" ip=""
   case "${ROLE}" in
-    master) host="${MASTER_HOST}"; ip="${MASTER_IP}" ;;
+    master)  host="${MASTER_HOST}";  ip="${MASTER_IP}" ;;
     worker1) host="${WORKER1_HOST}"; ip="${WORKER1_IP}" ;;
     worker2) host="${WORKER2_HOST}"; ip="${WORKER2_IP}" ;;
   esac
@@ -602,13 +699,15 @@ main() {
   iface="$(detect_iface)" || true
   [[ -n "${iface}" ]] || { echo "[ERROR] Cannot detect interface. Ensure network is up." >&2; exit 1; }
 
+  local cidr="${CIDR:-24}"
+  local dns="${DNS:-8.8.8.8,114.114.114.114}"
+
   local gw="${GATEWAY:-}"
   if [[ -z "${gw}" ]]; then
     gw="$(detect_gateway)"
   fi
   if [[ -z "${gw}" ]]; then
-    # fallback: prefix.2
-    [[ -n "${NET_PREFIX:-}" ]] || { echo "[ERROR] NET_PREFIX missing in conf and gateway not detected" >&2; exit 1; }
+    [[ -n "${NET_PREFIX:-}" ]] || { echo "[ERROR] NET_PREFIX missing and gateway not detected" >&2; exit 1; }
     gw="${NET_PREFIX}.2"
   fi
   valid_ipv4 "${gw}" || { echo "[ERROR] Invalid gateway: ${gw}" >&2; exit 1; }
@@ -634,7 +733,6 @@ main() {
 }
 
 main
-
 ```
 
 ##### cluster.conf
@@ -644,14 +742,17 @@ main
 # cluster.conf (Ubuntu 24 + VMware)
 # =========================
 
+# --- SSH admin user for remote install (must exist on all nodes) ---
+ADMIN_USER="hadoop"
+
 # --- Network ---
 NET_PREFIX="192.168.120"
 CIDR="24"
-# Gateway: 如果留空，脚本会从当前默认路由自动检测；检测不到则 fallback 为 ${NET_PREFIX}.2
+# Gateway: leave empty to auto-detect from current default route; fallback to ${NET_PREFIX}.2
 GATEWAY=""
 DNS="8.8.8.8,114.114.114.114"
 
-# --- Nodes (hostname must match role argument) ---
+# --- Nodes ---
 MASTER_HOST="master"
 MASTER_IP="192.168.120.10"
 
@@ -668,7 +769,7 @@ WORKERS_IPS="192.168.120.11 192.168.120.12"
 SECONDARY_HOST="worker1"
 SECONDARY_IP="192.168.120.11"
 
-# --- Hadoop/JDK download links ---
+# --- Download links ---
 JDK_DOWNLOAD_LINK="https://mirrors.tuna.tsinghua.edu.cn/Adoptium/8/jdk/x64/linux/OpenJDK8U-jdk_x64_linux_hotspot_8u472b08.tar.gz"
 HADOOP_DOWNLOAD_LINK="https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-3.4.2/hadoop-3.4.2.tar.gz"
 
@@ -682,13 +783,11 @@ DATA_BASE="/data/hadoop"
 # --- Cluster tuning for <=4GB VMs ---
 DFS_REPLICATION="2"
 
-# NodeManager resources
 YARN_NM_MEMORY_MB="3072"
 YARN_NM_VCORES="2"
 YARN_MIN_ALLOC_MB="512"
 YARN_MAX_ALLOC_MB="3072"
 
-# MapReduce default container sizes
 MR_MAP_MB="1024"
 MR_REDUCE_MB="1024"
 MR_AM_MB="1024"
@@ -697,10 +796,27 @@ MR_JAVA_XMX="768m"
 # JobHistoryServer on master
 HISTORYSERVER_HOST="master"
 HISTORYSERVER_IP="192.168.120.10"
-
 ```
 
+## 操作系统与环境
 
+Ubuntu 24 LTS
+Hadoop 3.4.2
+
+## IP 规划
+
+IP段 - 192.168.120.x
+Master - 192.168.120.10
+Worker1 - 192.168.120.11
+Worker2 - 192.168.120.12
+
+## 集群规划
+
+Master
+
+- HDFS: NameNode
+- YARN: ResourceManager
+- MapReduce: JobHistoryServer
 
 ## 参考文献
 
