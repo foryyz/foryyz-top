@@ -13,23 +13,23 @@ https://github.com/foryyz/HadoopDeploymentScript
 
 ## 运行方式
 
-#### 0 虚拟机安装Ubuntu 24 & 设置ip段
+### 0 虚拟机安装Ubuntu 24 & 设置ip段
 
 **Ubuntu24LTS镜像下载地址：** https://mirrors.aliyun.com/ubuntu-releases/24.04/ubuntu-24.04.3-desktop-amd64.iso
 
 用户名使用hadoop，主机名使用node
 
-#### 1 把三个文件拷贝到同目录
+### 1 把三个文件拷贝到同目录
 - `cluster.conf`
 - `set-static-ip.sh`
 - `install-hadoop-ubuntu24.sh`
-#### 2 给文件执行权限
+### 2 给文件执行权限
 ```sh
 chmod +x set-static-ip.sh install-hadoop-ubuntu24.sh
 ```
-#### 3 完整克隆后打开各虚拟机
+### 3 完整克隆后打开各虚拟机
 
-#### 4 按顺序执行文件
+### 4 按顺序执行文件
 
 master
 ```sh
@@ -46,6 +46,16 @@ sudo ./set-static-ip.sh worker2
 master
 ```sh
 sudo ./install-hadoop-ubuntu24.sh master
+```
+
+### 5 启动集群
+
+```sh
+su - hadoop
+start-dfs.sh
+start-yarn.sh
+mapred --daemon start historyserver
+jps
 ```
 
 ## 代码
