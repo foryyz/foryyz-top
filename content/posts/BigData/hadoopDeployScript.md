@@ -119,10 +119,6 @@ sudo ./run_hadoop.sh restart
 sudo ./run_hadoop.sh start --conf /path/to/cluster.conf
 ```
 
-### 6\. 脚本支持参数(到第5步已经安装完了，这是关于自定义的部分)
-
-
-
 
 
 ## 二 代码
