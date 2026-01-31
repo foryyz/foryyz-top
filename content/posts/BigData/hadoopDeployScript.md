@@ -7,67 +7,130 @@ Tags: ['Hadoop', 'Script']
 
 # Hadoop自动化部署shell脚本
 
-## 仓库地址
+本项目用于在 **Ubuntu 24**（VMware 完整克隆的三台虚拟机）上自动部署 **3 节点完全分布式 Hadoop 集群**：
 
-https://github.com/foryyz/HadoopDeploymentScript
+**默认集群配置：**
 
-## 运行方式
+- `master`：NameNode / ResourceManager / JobHistoryServer
+- `worker1`：DataNode / NodeManager / SecondaryNameNode
+- `worker2`：DataNode / NodeManager
+- `hadoop version`：3.4.2
 
-### 0 虚拟机安装Ubuntu 24 & 设置ip段
+集群安装参数、下载源、节点主机名/IP 等均可在 `cluster.conf` 中统一修改。
 
-**Ubuntu24LTS 清华镜像下载地址：** https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/noble/ubuntu-24.04.3-desktop-amd64.iso
+**Github 仓库地址：** https://github.com/foryyz/HadoopDeploymentScript
 
-用户名使用hadoop，主机名使用node
 
-### 1 把三个文件拷贝到同目录
+
+## 一 如何使用？
+
+### 0\. 准备：安装 Ubuntu 24 & 设置 IP 段
+
+**Ubuntu24LTS 清华镜像下载：** 
+https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/noble/ubuntu-24.04.3-desktop-amd64.iso
+
+安装系统时：
+
+- 用户名：`hadoop`
+- 主机名：`node`（可随意设置，脚本会自动改为 `cluster.conf` 中配置的主机名）
+- VMware 网络段建议使用：`192.168.120.0/24`（也可自行修改）
+
+**默认IP规划：**
+
+- `Master`：192.168.120.10
+- `Worker1`：192.168.120.11
+- `Worker2`：192.168.120.12
+
+### 1\. 在同目录创建四个文件
+
 - `cluster.conf`
-- `set-static-ip.sh`
-- `install-hadoop-ubuntu24.sh`
-### 2 给文件执行权限
+- `sc_all.sh`
+- `sc_master.sh`
+- `run_hadoop.sh`
+### 2\. 给文件执行权限
 ```sh
-chmod +x sc_1.sh sc_2.sh
+chmod +x sc_all.sh sc_master.sh run_hadoop.sh
 ```
-### 3 完整克隆后打开各虚拟机
+### 3\. 克隆虚拟机
 
-### 4 按顺序执行文件
+关闭系统，克隆两份，作为`worker1`、`worker2`
 
-master
+> 提示：完整克隆后机器的 `machine-id`、SSH host key 可能重复；脚本会自动修复（可在 `cluster.conf` 中开关）。
+
+### 4\. 按顺序执行脚本
+
+#### 4.1 在三台机器分别执行 sc_all.sh（系统前置）
+
+**master**
+
 ```sh
-sudo ./sc_1.sh master
+sudo ./sc_all.sh master
 ```
-worker1
+**worker1**
+
 ```sh
-sudo ./sc_1.sh worker1
+sudo ./sc_all.sh worker1
 ```
-worker2
+**worker2**
+
 ```sh
-sudo ./sc_1.sh worker2
+sudo ./sc_all.sh worker2
 ```
-master
+#### 4.2 在 master 执行 sc_master.sh（安装+配置+分发）
+
+**master**
+
 ```sh
-sudo ./sc_2.sh
+sudo ./sc_master.sh
 ```
 
 ### 5 启动集群
 
 ```sh
-su - hadoop
-start-dfs.sh
-start-yarn.sh
-mapred --daemon start historyserver
-jps
+sudo ./run_hadoop.sh start
 ```
 
-## 代码
+`run_hadoop.sh` 支持如下命令：
 
-##### sc_1.sh
+```sh
+# 首次启动（若未格式化会自动 format）
+sudo ./run_hadoop.sh start
+
+# 只格式化（谨慎，会清空元数据）
+sudo ./run_hadoop.sh format
+
+# 只做健康检查
+sudo ./run_hadoop.sh health
+
+# 停止
+sudo ./run_hadoop.sh stop
+
+# 查看状态（jps + yarn node list）
+sudo ./run_hadoop.sh status
+
+# 重启
+sudo ./run_hadoop.sh restart
+
+# 指定配置文件
+sudo ./run_hadoop.sh start --conf /path/to/cluster.conf
+```
+
+### 6\. 脚本支持参数(到第5步已经安装完了，这是关于自定义的部分)
+
+
+
+
+
+## 二 代码
+
+### sc_all.sh
 
 ```sh
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
 # ============================================================
-# sc_1.sh - Ubuntu 24 Hadoop Cluster Prerequisites (per-node)
+# sc_all.sh - Ubuntu 24 Hadoop Cluster Prerequisites (per-node)
 # - Install SSH/tools
 # - Fix clone identity (machine-id + ssh host keys) (optional)
 # - Set hostname
@@ -78,7 +141,7 @@ set -Eeuo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
 WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="/var/log/hadoop-deploy-sc_1.log"
+LOG_FILE="/var/log/hadoop-deploy-sc_all.log"
 
 # --------------------- Logging ---------------------
 log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG_FILE" >&2; }
@@ -100,6 +163,30 @@ OVERRIDE_NET_PREFIX=""
 OVERRIDE_NET_CIDR=""
 OVERRIDE_GATEWAY=""
 OVERRIDE_DNS=""
+
+resolve_static_ip_by_role() {
+  if [[ -n "${STATIC_IP}" ]]; then
+    # 命令行 --ip 优先
+    return 0
+  fi
+
+  case "${ROLE}" in
+    master)
+      STATIC_IP="${DEFAULT_IP_MASTER}"
+      ;;
+    worker1)
+      STATIC_IP="${DEFAULT_IP_WORKER1}"
+      ;;
+    worker2)
+      STATIC_IP="${DEFAULT_IP_WORKER2}"
+      ;;
+    *)
+      die "无法为未知角色分配 IP：${ROLE}"
+      ;;
+  esac
+
+  log "未指定 --ip，使用 cluster.conf 中的默认 IP：${STATIC_IP}"
+}
 
 # --------------------- Helpers ---------------------
 require_root() {
@@ -201,7 +288,6 @@ parse_args() {
     *) die "role 必须是 master/worker1/worker2，你输入的是: ${ROLE}";;
   esac
 
-  [[ -n "${STATIC_IP}" ]] || die "必须提供 --ip <IPv4>"
 }
 
 validate_ipv4() {
@@ -436,6 +522,23 @@ prepare_ssh_keys_for_user() {
   chown "${HADOOP_USER}:${HADOOP_USER}" "${ssh_dir}/authorized_keys"
   chmod 600 "${ssh_dir}/authorized_keys"
 }
+ensure_self_ssh_trust_for_user() {
+  local u="${HADOOP_USER}"
+  local uhome
+  uhome="$(eval echo "~${u}")"
+
+  log "为用户 ${u} 配置本机免密 SSH（self-ssh）..."
+
+  # 1) known_hosts 加入本机 hostname（避免 StrictHostKeyChecking 卡住）
+  sudo -u "${u}" bash -lc "ssh-keyscan -H \"$(hostnamectl --static 2>/dev/null || hostname)\" 2>/dev/null >> \"${uhome}/.ssh/known_hosts\" || true"
+  sudo -u "${u}" bash -lc "ssh-keyscan -H 127.0.0.1 2>/dev/null >> \"${uhome}/.ssh/known_hosts\" || true"
+  sudo -u "${u}" bash -lc "ssh-keyscan -H localhost 2>/dev/null >> \"${uhome}/.ssh/known_hosts\" || true"
+
+  # 2) authorized_keys 包含自己的公钥（关键）
+  sudo -u "${u}" bash -lc "cat \"${uhome}/.ssh/id_rsa.pub\" >> \"${uhome}/.ssh/authorized_keys\""
+  sudo -u "${u}" bash -lc "sort -u \"${uhome}/.ssh/authorized_keys\" -o \"${uhome}/.ssh/authorized_keys\""
+  chmod 600 "${uhome}/.ssh/authorized_keys"
+}
 
 # --------------------- Checks ---------------------
 system_checks_summary() {
@@ -463,6 +566,9 @@ main() {
   parse_args "$@"
   load_config
 
+  # 在这里自动确定 IP
+  resolve_static_ip_by_role
+  
   # role -> if user didn't set cluster.conf CLUSTER_IPS to match, still okay:
   # /etc/hosts will reflect cluster.conf. The local static IP uses --ip.
   # If you want cluster.conf to track overrides, user can edit cluster.conf manually.
@@ -481,6 +587,7 @@ main() {
 
   write_etc_hosts
   prepare_ssh_keys_for_user
+  ensure_self_ssh_trust_for_user
 
   system_checks_summary
   log "========== ${SCRIPT_NAME} DONE =========="
@@ -490,7 +597,7 @@ main "$@"
 
 ```
 
-##### sc_2.sh
+### sc_master.sh
 
 ```sh
 #!/usr/bin/env bash
@@ -498,7 +605,7 @@ set -Eeuo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
 WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="/var/log/hadoop-deploy-sc_2.log"
+LOG_FILE="/var/log/hadoop-deploy-sc_master.log"
 
 log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG_FILE" >&2; }
 die() { log "ERROR: $*"; exit 1; }
@@ -515,8 +622,8 @@ usage() {
 
 说明:
   - 仅在 master 上执行
-  - 负责 JDK/Hadoop 下载、安装、生成配置、分发到 worker（远程 root 执行）
-  - 不执行 format/start/health_check（将由单独脚本负责）
+  - 负责：下载/安装 JDK+Hadoop、生成配置、通过 hadoop@worker 分发并落地
+  - 不执行 format/start/health_check（由 run_hadoop.sh 负责）
 
 可选:
   --conf <path>   指定配置文件（默认: 脚本同目录 cluster.conf）
@@ -561,7 +668,6 @@ load_config() {
   : "${WORKER1_HOSTNAME:?}"
   : "${WORKER2_HOSTNAME:?}"
   : "${CLUSTER_HOSTNAMES:?}"
-  : "${CLUSTER_IPS:?}"
 
   : "${JDK_DOWNLOAD_LINK:?}"
   : "${HADOOP_DOWNLOAD_LINK:?}"
@@ -583,9 +689,8 @@ load_config() {
   : "${MAPREDUCE_JOBHISTORY_ADDRESS_PORT:?}"
   : "${MAPREDUCE_JOBHISTORY_WEBAPP_PORT:?}"
 
-  # 新增：root 推送免密模式（推荐 sshpass）
   : "${SSH_PUSH_MODE:?}"          # copy-id | sshpass
-  : "${SSH_DEFAULT_PASSWORD:?}"   # 仅 sshpass 时需要（用于克隆默认密码）
+  : "${SSH_DEFAULT_PASSWORD:?}"   # 仅 sshpass 时需要
 }
 
 require_master() {
@@ -604,39 +709,41 @@ ensure_hadoop_user_exists_local() {
 assert_hosts_ready() {
   local h
   for h in "${CLUSTER_HOSTNAMES[@]}"; do
-    getent hosts "${h}" >/dev/null 2>&1 || die "无法解析 ${h}，请确认三台已跑 sc_1.sh 并写好 /etc/hosts"
+    getent hosts "${h}" >/dev/null 2>&1 || die "无法解析 ${h}，请确认三台已跑 sc_all.sh 并写好 /etc/hosts"
   done
 }
 
-# ---- SSH (root -> workers) ----
-prepare_root_known_hosts() {
-  mkdir -p /root/.ssh
-  chmod 700 /root/.ssh
-  touch /root/.ssh/known_hosts
-  chmod 600 /root/.ssh/known_hosts
+# ---- SSH: hadoop -> workers ----
+prepare_hadoop_known_hosts() {
+  local uhome
+  uhome="$(eval echo "~${HADOOP_USER}")"
+  mkdir -p "${uhome}/.ssh"
+  chmod 700 "${uhome}/.ssh"
+  touch "${uhome}/.ssh/known_hosts"
+  chmod 600 "${uhome}/.ssh/known_hosts"
+  chown -R "${HADOOP_USER}:${HADOOP_USER}" "${uhome}/.ssh"
 
   local w
   for w in $(get_workers); do
-    ssh-keygen -R "${w}" >/dev/null 2>&1 || true
-    ssh-keyscan -H "${w}" >> /root/.ssh/known_hosts 2>/dev/null || true
+    sudo -u "${HADOOP_USER}" ssh-keygen -R "${w}" >/dev/null 2>&1 || true
+    sudo -u "${HADOOP_USER}" ssh-keyscan -H "${w}" >> "${uhome}/.ssh/known_hosts" 2>/dev/null || true
   done
 }
 
-push_root_key_to_workers() {
-  # root keypair
-  if [[ ! -f /root/.ssh/id_rsa ]]; then
-    ssh-keygen -t rsa -b 4096 -N "" -f /root/.ssh/id_rsa >/dev/null
-  fi
+push_hadoop_key_to_workers() {
+  local uhome
+  uhome="$(eval echo "~${HADOOP_USER}")"
+  [[ -f "${uhome}/.ssh/id_rsa.pub" ]] || die "master 上 ${HADOOP_USER} 未生成 SSH key，请先跑 sc_all.sh"
 
   local w
   for w in $(get_workers); do
     if [[ "${SSH_PUSH_MODE}" == "copy-id" ]]; then
-      log "ssh-copy-id root@${w}（需要输入 root 密码）"
-      ssh-copy-id -o StrictHostKeyChecking=yes "root@${w}"
+      log "ssh-copy-id ${HADOOP_USER}@${w}（需要输入 ${HADOOP_USER} 密码）"
+      sudo -u "${HADOOP_USER}" ssh-copy-id -o StrictHostKeyChecking=yes "${HADOOP_USER}@${w}"
     elif [[ "${SSH_PUSH_MODE}" == "sshpass" ]]; then
       apt_install sshpass >/dev/null
-      log "sshpass 推送 root 公钥到 root@${w}"
-      sshpass -p "${SSH_DEFAULT_PASSWORD}" ssh-copy-id -o StrictHostKeyChecking=yes "root@${w}"
+      log "sshpass 推送 ${HADOOP_USER} 公钥到 ${HADOOP_USER}@${w}"
+      sudo -u "${HADOOP_USER}" sshpass -p "${SSH_DEFAULT_PASSWORD}" ssh-copy-id -o StrictHostKeyChecking=yes "${HADOOP_USER}@${w}"
     else
       die "未知 SSH_PUSH_MODE=${SSH_PUSH_MODE}（只支持 copy-id/sshpass）"
     fi
@@ -657,6 +764,7 @@ download_artifacts() {
   else
     log "JDK 包已存在：${jdk_tar}"
   fi
+
   if [[ ! -f "${hdp_tar}" ]]; then
     log "下载 Hadoop..."
     curl -L --fail -o "${hdp_tar}" "${HADOOP_DOWNLOAD_LINK}"
@@ -672,6 +780,7 @@ download_artifacts() {
 
 install_jdk_local() {
   local jdk_tar="$1"
+
   if [[ -d "${JAVA_DIR}" && "${FORCE_REINSTALL}" != "true" ]]; then
     log "JAVA_DIR 已存在，跳过：${JAVA_DIR}"
   else
@@ -699,6 +808,7 @@ EOF
 
 install_hadoop_local() {
   local hdp_tar="$1"
+
   mkdir -p "${INSTALL_BASE}/.tmp_hadoop"
   rm -rf "${INSTALL_BASE}/.tmp_hadoop/*" || true
   tar -xzf "${hdp_tar}" -C "${INSTALL_BASE}/.tmp_hadoop"
@@ -735,6 +845,7 @@ generate_hadoop_configs() {
   [[ -d "${etc_dir}" ]] || die "找不到 ${etc_dir}"
 
   local secondary_port="9868"  # Hadoop3 SecondaryNameNode web default
+
   cat > "${etc_dir}/core-site.xml" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
@@ -830,33 +941,57 @@ EOF
   log "Hadoop 配置生成完成。"
 }
 
-# ---- Distribute to workers (root) ----
-distribute_to_workers_root() {
+# ---- Distribute via hadoop@worker + sudo ----
+remote_sudo() {
+  local host="$1"; shift
+  local cmd="$*"
+
+  if [[ "${SSH_PUSH_MODE}" == "copy-id" ]]; then
+    # 交互式：会提示输入 sudo 密码
+    sudo -u "${HADOOP_USER}" ssh -tt "${HADOOP_USER}@${host}" "sudo bash -lc $(printf '%q' "${cmd}")"
+  else
+    # 全自动：用 sshpass 提供 sudo 密码
+    apt_install sshpass >/dev/null
+    sudo -u "${HADOOP_USER}" sshpass -p "${SSH_DEFAULT_PASSWORD}" ssh -tt "${HADOOP_USER}@${host}" \
+      "echo '${SSH_DEFAULT_PASSWORD}' | sudo -S bash -lc $(printf '%q' "${cmd}")"
+  fi
+}
+
+distribute_to_workers() {
   local version_dir
   version_dir="$(readlink -f "${HADOOP_SYMLINK}")"
 
   local w
   for w in $(get_workers); do
-    log "=== 分发到 ${w}（root）==="
+    log "=== 分发到 ${w}（hadoop@worker）==="
 
-    # ensure base dirs
-    ssh -o BatchMode=yes "root@${w}" "mkdir -p '${INSTALL_BASE}' '${HADOOP_DATA_DIR}' '${HDFS_NAME_DIR}' '${HDFS_DATA_DIR}'"
+    sudo -u "${HADOOP_USER}" ssh "${HADOOP_USER}@${w}" "mkdir -p /home/${HADOOP_USER}/.stage_hadoop" >/dev/null
 
-    # rsync Java + Hadoop version dir
-    rsync -az --delete "${JAVA_DIR}/" "root@${w}:${JAVA_DIR}/"
-    rsync -az --delete "${version_dir}/" "root@${w}:${version_dir}/"
+    log "rsync JDK -> ${w} 临时目录"
+    sudo -u "${HADOOP_USER}" rsync -az --delete "${JAVA_DIR}/" "${HADOOP_USER}@${w}:/home/${HADOOP_USER}/.stage_hadoop/jdk/"
 
-    # symlink
-    ssh -o BatchMode=yes "root@${w}" "rm -f '${HADOOP_SYMLINK}' && ln -s '${version_dir}' '${HADOOP_SYMLINK}'"
+    log "rsync Hadoop -> ${w} 临时目录"
+    sudo -u "${HADOOP_USER}" rsync -az --delete "${version_dir}/" "${HADOOP_USER}@${w}:/home/${HADOOP_USER}/.stage_hadoop/hadoop/"
 
-    # profile.d
-    rsync -az /etc/profile.d/java.sh "root@${w}:/etc/profile.d/java.sh"
-    rsync -az /etc/profile.d/hadoop.sh "root@${w}:/etc/profile.d/hadoop.sh"
-    ssh -o BatchMode=yes "root@${w}" "chmod 644 /etc/profile.d/java.sh /etc/profile.d/hadoop.sh"
+    log "rsync profile.d -> ${w} 临时目录"
+    sudo -u "${HADOOP_USER}" rsync -az /etc/profile.d/java.sh "${HADOOP_USER}@${w}:/home/${HADOOP_USER}/.stage_hadoop/java.sh"
+    sudo -u "${HADOOP_USER}" rsync -az /etc/profile.d/hadoop.sh "${HADOOP_USER}@${w}:/home/${HADOOP_USER}/.stage_hadoop/hadoop.sh"
 
-    # ensure hadoop user owns needed dirs
-    ssh -o BatchMode=yes "root@${w}" "id -u '${HADOOP_USER}' >/dev/null 2>&1 || useradd -m -s /bin/bash '${HADOOP_USER}'"
-    ssh -o BatchMode=yes "root@${w}" "chown -R '${HADOOP_USER}:${HADOOP_USER}' '${HADOOP_DATA_DIR}' '${version_dir}'"
+    log "落地到系统目录（sudo）"
+    remote_sudo "${w}" "
+      mkdir -p '${INSTALL_BASE}' '${HADOOP_DATA_DIR}' '${HDFS_NAME_DIR}' '${HDFS_DATA_DIR}';
+      rm -rf '${JAVA_DIR}' '${version_dir}';
+      mkdir -p '${JAVA_DIR}' '${version_dir}';
+      rsync -a --delete /home/${HADOOP_USER}/.stage_hadoop/jdk/ '${JAVA_DIR}/';
+      rsync -a --delete /home/${HADOOP_USER}/.stage_hadoop/hadoop/ '${version_dir}/';
+      rm -f '${HADOOP_SYMLINK}';
+      ln -s '${version_dir}' '${HADOOP_SYMLINK}';
+      mv /home/${HADOOP_USER}/.stage_hadoop/java.sh /etc/profile.d/java.sh;
+      mv /home/${HADOOP_USER}/.stage_hadoop/hadoop.sh /etc/profile.d/hadoop.sh;
+      chmod 644 /etc/profile.d/java.sh /etc/profile.d/hadoop.sh;
+      id -u '${HADOOP_USER}' >/dev/null 2>&1 || useradd -m -s /bin/bash '${HADOOP_USER}';
+      chown -R '${HADOOP_USER}:${HADOOP_USER}' '${HADOOP_DATA_DIR}' '${version_dir}';
+    "
 
     log "${w} 分发完成。"
   done
@@ -877,8 +1012,8 @@ main() {
   assert_hosts_ready
   ensure_hadoop_user_exists_local
 
-  prepare_root_known_hosts
-  push_root_key_to_workers
+  prepare_hadoop_known_hosts
+  push_hadoop_key_to_workers
 
   local files
   files="$(download_artifacts)"
@@ -888,14 +1023,13 @@ main() {
   install_jdk_local "${jdk_tar}"
   install_hadoop_local "${hdp_tar}"
 
-  # create data dirs local
   mkdir -p "${HADOOP_DATA_DIR}" "${HDFS_NAME_DIR}" "${HDFS_DATA_DIR}"
   chown -R "${HADOOP_USER}:${HADOOP_USER}" "${HADOOP_DATA_DIR}" || true
 
   generate_hadoop_configs
-  distribute_to_workers_root
+  distribute_to_workers
 
-  log "DONE: sc_2 完成安装+配置+分发（未 format/start/health_check）"
+  log "DONE: sc_master 完成安装+配置+分发"
   log "========== ${SCRIPT_NAME} DONE =========="
 }
 
@@ -903,45 +1037,293 @@ main "$@"
 
 ```
 
-##### ctrl_hadoop.sh
+### run_hadoop.sh
 
 ```shell
-chmod +x ctrl_hadoop.sh
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-# 首次启动（若未格式化会自动 format）
-sudo ./ctrl_hadoop.sh start
+# ============================================================
+# run_hadoop.sh - Hadoop Cluster Lifecycle (master only)
+# Responsibilities:
+#   - format_namenode_if_first_time
+#   - start_hadoop_services / stop_hadoop_services
+#   - health_check / status
+# Depends on:
+#   - cluster.conf
+#   - sc_all.sh done on all nodes
+#   - sc_master.sh done on master (install+config+distribute)
+# ============================================================
 
-# 只格式化（谨慎，会清空元数据）
-sudo ./ctrl_hadoop.sh format
+SCRIPT_NAME="$(basename "$0")"
+WORKDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_FILE="/var/log/hadoop-deploy-run_hadoop.log"
 
-# 只做健康检查
-sudo ./ctrl_hadoop.sh health
+log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG_FILE" >&2; }
+die() { log "ERROR: $*"; exit 1; }
 
-# 停止
-sudo ./ctrl_hadoop.sh stop
+trap 'ec=$?; log "ERROR(exit=$ec) line ${BASH_LINENO[0]}: ${BASH_COMMAND}"; exit $ec' ERR
 
-# 查看状态（jps + yarn node list）
-sudo ./ctrl_hadoop.sh status
+CONF_PATH=""
+ACTION="${1:-}"
+shift || true
 
-# 重启
-sudo ./ctrl_hadoop.sh restart
+usage() {
+  cat >&2 <<EOF
+用法:
+  sudo ./${SCRIPT_NAME} <start|stop|restart|status|format|health> [--conf /path/cluster.conf]
 
-# 指定配置文件
-sudo ./ctrl_hadoop.sh start --conf /path/to/cluster.conf
+说明:
+  - 仅在 master 执行
+  - start: 如未格式化则自动 format，然后启动 dfs+yarn+historyserver(可选)
+  - format: 强制格式化 NameNode（危险）
+  - health: 集群健康检查
+EOF
+}
+
+require_root() {
+  [[ "${EUID}" -eq 0 ]] || die "请用 root 或 sudo 运行：sudo ./${SCRIPT_NAME} ..."
+}
+
+parse_args() {
+  if [[ -z "${ACTION}" ]]; then
+    usage; exit 1
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --conf) CONF_PATH="$2"; shift 2;;
+      -h|--help) usage; exit 0;;
+      *) die "未知参数: $1";;
+    esac
+  done
+
+  case "${ACTION}" in
+    start|stop|restart|status|format|health) ;;
+    *) die "未知动作: ${ACTION}（支持 start/stop/restart/status/format/health）";;
+  esac
+}
+
+load_config() {
+  if [[ -z "${CONF_PATH}" ]]; then
+    if [[ -f "${WORKDIR}/cluster.conf" ]]; then
+      CONF_PATH="${WORKDIR}/cluster.conf"
+    else
+      die "找不到 cluster.conf，请用 --conf 指定"
+    fi
+  fi
+
+  # shellcheck disable=SC1090
+  source "${CONF_PATH}"
+
+  : "${HADOOP_USER:?}"
+  : "${MASTER_HOSTNAME:?}"
+  : "${WORKER1_HOSTNAME:?}"
+  : "${WORKER2_HOSTNAME:?}"
+  : "${CLUSTER_HOSTNAMES:?}"
+  : "${HADOOP_SYMLINK:?}"
+  : "${JAVA_DIR:?}"
+  : "${HADOOP_DATA_DIR:?}"
+  : "${HDFS_NAME_DIR:?}"
+  : "${HDFS_DATA_DIR:?}"
+
+  : "${ENABLE_JOBHISTORYSERVER:=false}"
+  : "${JOBHISTORYSERVER_HOSTNAME:=}"
+}
+
+require_master() {
+  local hn
+  hn="$(hostnamectl --static 2>/dev/null || hostname)"
+  [[ "${hn}" == "${MASTER_HOSTNAME}" ]] || die "只能在 master 执行：当前=${hn} 期望=${MASTER_HOSTNAME}"
+}
+
+hadoop_env() {
+  export JAVA_HOME="${JAVA_DIR}"
+  export HADOOP_HOME="${HADOOP_SYMLINK}"
+  export PATH="${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${JAVA_HOME}/bin:${PATH}"
+}
+
+as_hadoop() {
+  # run command as hadoop user with env loaded
+  sudo -u "${HADOOP_USER}" -H bash -lc "export JAVA_HOME='${JAVA_DIR}'; export HADOOP_HOME='${HADOOP_SYMLINK}'; export PATH=\"\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin:\$JAVA_HOME/bin:\$PATH\"; $*"
+}
+
+assert_prerequisites() {
+  [[ -d "${HADOOP_SYMLINK}" ]] || die "找不到 HADOOP_SYMLINK=${HADOOP_SYMLINK}，请先执行 sc_master.sh"
+  [[ -x "${JAVA_DIR}/bin/java" ]] || die "找不到 JAVA=${JAVA_DIR}/bin/java，请先执行 sc_master.sh"
+
+  # hosts resolvable
+  local h
+  for h in "${CLUSTER_HOSTNAMES[@]}"; do
+    getent hosts "${h}" >/dev/null 2>&1 || die "无法解析 ${h}，请确认三台已跑 sc_all.sh 并写好 /etc/hosts"
+  done
+
+  # data dirs
+  mkdir -p "${HADOOP_DATA_DIR}" "${HDFS_NAME_DIR}" "${HDFS_DATA_DIR}"
+  chown -R "${HADOOP_USER}:${HADOOP_USER}" "${HADOOP_DATA_DIR}" || true
+}
+
+# ------------------------------------------------------------
+# 1) format_namenode_if_first_time
+# ------------------------------------------------------------
+is_namenode_formatted() {
+  # Hadoop creates VERSION file in current dir when formatted:
+  # ${HDFS_NAME_DIR}/current/VERSION
+  [[ -f "${HDFS_NAME_DIR}/current/VERSION" ]]
+}
+
+format_namenode_if_first_time() {
+  if is_namenode_formatted; then
+    log "NameNode 已格式化（发现 ${HDFS_NAME_DIR}/current/VERSION），跳过 format。"
+    return 0
+  fi
+
+  log "检测到 NameNode 未格式化，开始执行 hdfs namenode -format ..."
+  # ensure name dir exists & owned
+  mkdir -p "${HDFS_NAME_DIR}"
+  chown -R "${HADOOP_USER}:${HADOOP_USER}" "${HDFS_NAME_DIR}" || true
+
+  # non-interactive format: -force -nonInteractive
+  as_hadoop "hdfs namenode -format -force -nonInteractive"
+  log "NameNode format 完成。"
+}
+
+format_namenode_force() {
+  log "警告：你正在执行强制 format，将清空 NameNode 元数据：${HDFS_NAME_DIR}"
+  as_hadoop "hdfs namenode -format -force -nonInteractive"
+  log "强制 format 完成。"
+}
+
+# ------------------------------------------------------------
+# 2) start_hadoop_services / stop
+# ------------------------------------------------------------
+start_hadoop_services() {
+  log "启动 HDFS（start-dfs.sh）..."
+  as_hadoop "start-dfs.sh"
+
+  log "启动 YARN（start-yarn.sh）..."
+  as_hadoop "start-yarn.sh"
+
+  if [[ "${ENABLE_JOBHISTORYSERVER}" == "true" ]]; then
+    # historyserver can be started on any host, we start on master by design
+    log "启动 JobHistoryServer（mapred --daemon start historyserver）..."
+    as_hadoop "mapred --daemon start historyserver"
+  else
+    log "ENABLE_JOBHISTORYSERVER!=true，跳过 JobHistoryServer。"
+  fi
+
+  log "启动命令已执行完成（不代表所有进程都已就绪，health 可验证）。"
+}
+
+stop_hadoop_services() {
+  if [[ "${ENABLE_JOBHISTORYSERVER}" == "true" ]]; then
+    log "停止 JobHistoryServer ..."
+    as_hadoop "mapred --daemon stop historyserver" || true
+  fi
+
+  log "停止 YARN（stop-yarn.sh）..."
+  as_hadoop "stop-yarn.sh" || true
+
+  log "停止 HDFS（stop-dfs.sh）..."
+  as_hadoop "stop-dfs.sh" || true
+
+  log "停止命令已执行完成。"
+}
+
+# ------------------------------------------------------------
+# 3) health_check / status
+# ------------------------------------------------------------
+status_local_jps() {
+  log "本机 jps："
+  as_hadoop "jps" || true
+}
+
+status_workers_jps() {
+  log "worker jps（通过 hadoop 用户 ssh）:"
+  local w
+  for w in "${WORKER1_HOSTNAME}" "${WORKER2_HOSTNAME}"; do
+    log "---- ${w} ----"
+    # do not fail whole script if one worker unreachable
+    as_hadoop "ssh -o BatchMode=yes -o ConnectTimeout=5 ${HADOOP_USER}@${w} 'jps || true'" || true
+  done
+}
+
+health_hdfs_basic() {
+  log "HDFS 基础检查：创建并列出 /tmp ..."
+  as_hadoop "hdfs dfs -mkdir -p /tmp" || true
+  as_hadoop "hdfs dfs -ls /" || true
+}
+
+health_yarn_nodes() {
+  log "YARN NodeManager 列表："
+  as_hadoop "yarn node -list" || true
+}
+
+health_check() {
+  log "========== HEALTH CHECK =========="
+  status_local_jps
+  status_workers_jps
+  health_hdfs_basic
+  health_yarn_nodes
+  log "========== END HEALTH CHECK ======"
+}
+
+status() {
+  log "========== STATUS =========="
+  status_local_jps
+  health_yarn_nodes
+  log "提示：更完整请用 health"
+  log "========== END STATUS ====="
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+main() {
+  require_root
+  parse_args "$@"
+  load_config
+  require_master
+  assert_prerequisites
+  hadoop_env
+
+  log "========== ${SCRIPT_NAME} START =========="
+  log "action: ${ACTION}, conf: ${CONF_PATH}"
+
+  case "${ACTION}" in
+    start)
+      format_namenode_if_first_time
+      start_hadoop_services
+      ;;
+    stop)
+      stop_hadoop_services
+      ;;
+    restart)
+      stop_hadoop_services
+      format_namenode_if_first_time
+      start_hadoop_services
+      ;;
+    status)
+      status
+      ;;
+    format)
+      format_namenode_force
+      ;;
+    health)
+      health_check
+      ;;
+  esac
+
+  log "========== ${SCRIPT_NAME} DONE =========="
+}
+
+main "$@"
 
 ```
 
-##### cluster.conf
+### cluster.conf
 
-```conf
-# ============================================================
-# Hadoop 3.x 完全分布式集群配置文件（Ubuntu 24 + VMware）
-# 适配脚本：
-#   sc_1.sh  - 系统前置（网络 / SSH / 主机名 / 克隆修复）
-#   sc_2.sh  - Hadoop 安装 + 配置 + 分发（不含 format/start）
-# ============================================================
-
-
+```apache
 # =========================
 # 基础用户配置
 # =========================
@@ -953,20 +1335,15 @@ TIMEZONE="Asia/Shanghai"
 # =========================
 # 网络配置（VMware）
 # =========================
-# VMware 虚拟网络编辑器中设置的网段
 NET_PREFIX="192.168.120"
 NET_CIDR="24"
-
-# 网关地址（以 VMware NAT/Host-only 实际值为准）
 GATEWAY="192.168.120.2"
-
-# DNS（可多个）
 DNS_SERVERS=("114.114.114.114" "8.8.8.8")
 
 
 # =========================
 # IP 规划（默认）
-# 可在 sc_1.sh 执行时用 --ip 覆盖
+# sc_all.sh 不传 --ip 时会读取这里的默认值
 # =========================
 DEFAULT_IP_MASTER="192.168.120.10"
 DEFAULT_IP_WORKER1="192.168.120.11"
@@ -984,20 +1361,6 @@ WORKER2_HOSTNAME="worker2"
 # =========================
 # 集群角色规划
 # =========================
-# master:
-#   - NameNode
-#   - ResourceManager
-#   - JobHistoryServer
-#
-# worker1:
-#   - DataNode
-#   - NodeManager
-#   - SecondaryNameNode
-#
-# worker2:
-#   - DataNode
-#   - NodeManager
-
 ENABLE_SECONDARY_NAMENODE="true"
 SECONDARY_NAMENODE_HOSTNAME="${WORKER1_HOSTNAME}"
 
@@ -1015,16 +1378,9 @@ HADOOP_DOWNLOAD_LINK="https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/
 # =========================
 # 安装路径规划
 # =========================
-# 推荐：程序与数据分离
 INSTALL_BASE="/opt"
-
-# Java 安装目录
 JAVA_DIR="${INSTALL_BASE}/jdk8"
-
-# Hadoop 版本目录（实际安装目录）
 HADOOP_DIR="${INSTALL_BASE}/hadoop"
-
-# Hadoop 当前版本软链接（方便升级）
 HADOOP_SYMLINK="${INSTALL_BASE}/hadoop-current"
 
 
@@ -1032,7 +1388,6 @@ HADOOP_SYMLINK="${INSTALL_BASE}/hadoop-current"
 # Hadoop 数据目录
 # =========================
 HADOOP_DATA_DIR="/data/hadoop"
-
 HDFS_NAME_DIR="${HADOOP_DATA_DIR}/namenode"
 HDFS_DATA_DIR="${HADOOP_DATA_DIR}/datanode"
 
@@ -1041,8 +1396,6 @@ HDFS_DATA_DIR="${HADOOP_DATA_DIR}/datanode"
 # Hadoop 核心参数
 # =========================
 FS_DEFAULT_PORT="9000"
-
-# 只有 2 个 DataNode，必须是 2
 HDFS_REPLICATION="2"
 
 
@@ -1054,11 +1407,10 @@ MAPREDUCE_JOBHISTORY_WEBAPP_PORT="19888"
 
 
 # =========================
-# SSH / 远程分发策略
+# SSH / 分发策略（hadoop@worker）
 # =========================
-# sc_2.sh 使用 root@worker 分发文件
-# copy-id  : 执行时手动输入 root 密码（推荐）
-# sshpass  : 全自动（教学环境可用）
+# copy-id : 执行时手动输入 worker 上 hadoop 的密码（推荐）
+# sshpass : 全自动（教学环境）
 SSH_PUSH_MODE="copy-id"
 
 # 仅当 SSH_PUSH_MODE=sshpass 时需要
@@ -1066,26 +1418,8 @@ SSH_DEFAULT_PASSWORD="hadoop"
 
 
 # =========================
-# Root SSH 支持（关键）
-# =========================
-# Ubuntu 默认 root 无密码，且 SSH 禁止 root 登录
-# sc_1.sh 会根据以下配置自动处理
-
-ENABLE_ROOT_SSH="true"
-
-# true  = 允许 root 使用密码登录（用于首次推 key）
-# false = 只允许 root 使用密钥登录
-ROOT_SSH_PASSWORD_AUTH="true"
-
-# root 默认密码（Ubuntu 必须设置，否则无法 ssh-copy-id）
-# ⚠ 教学/实验环境可用，生产环境不推荐
-ROOT_DEFAULT_PASSWORD="hadoop"
-
-
-# =========================
 # VMware 克隆修复
 # =========================
-# 修复 machine-id 与 SSH host key 冲突
 FIX_CLONE_IDENTITY="true"
 
 
@@ -1112,27 +1446,105 @@ CLUSTER_IPS=(
 
 ```
 
-## 操作系统与环境
+## 三 脚本支持参数说明
 
-Ubuntu 24 LTS
-Hadoop 3.4.2
+### sc_all.sh
 
-## IP 规划
+#### 用法与示例
 
-IP段 - 192.168.120.x
-Master - 192.168.120.10
-Worker1 - 192.168.120.11
-Worker2 - 192.168.120.12
+```sh
+sudo ./sc_all.sh <master|worker1|worker2> [options]
 
-## 集群规划
+# 示例
+# 使用 cluster.conf 默认 IP
+sudo ./sc_all.sh worker1
 
-Master
+# 覆盖 IP
+sudo ./sc_all.sh worker1 --ip 192.168.120.88
 
-- HDFS: NameNode
-- YARN: ResourceManager
-- MapReduce: JobHistoryServer
+# 覆盖网关/DNS
+sudo ./sc_all.sh master --gateway 192.168.120.2 --dns 114.114.114.114,8.8.8.8
+```
 
-## 参考文献
+#### options
+
+- `--conf <path>`
+   指定配置文件路径（默认：脚本同目录 `cluster.conf`）
+- `--ip <IPv4>`
+   覆盖该节点默认 IP（默认不需要写；不写则按角色读取 `cluster.conf`）
+  - master → `DEFAULT_IP_MASTER`
+  - worker1 → `DEFAULT_IP_WORKER1`
+  - worker2 → `DEFAULT_IP_WORKER2`
+- `--hostname <name>`
+   覆盖该节点主机名（默认按 `cluster.conf` 的 `MASTER_HOSTNAME/WORKER1_HOSTNAME/WORKER2_HOSTNAME`）
+- `--cidr <n>`
+   覆盖 `NET_CIDR`
+- `--gateway <IPv4>`
+   覆盖 `GATEWAY`
+- `--dns <a,b,c>`
+   覆盖 DNS（逗号分隔，例如 `--dns 114.114.114.114,8.8.8.8`）
+
+### sc_master.sh
+
+#### 用法
+
+```sh
+sudo ./sc_master.sh [options]
+```
+
+#### options
+
+- `--conf <path>`
+   指定配置文件路径（默认：脚本同目录 `cluster.conf`）
+- `--force`
+   强制重新安装/覆盖 JDK & Hadoop（谨慎使用）
+
+### run_hadoop.sh
+
+### 用法
+
+```sh
+sudo ./run_hadoop.sh <start|stop|restart|status|format|health> [--conf <path>]
+```
+
+#### options
+
+- `--conf <path>`
+   指定配置文件路径（默认：脚本同目录 `cluster.conf`）
+
+## 四 脚本任务说明
+
+`sc_all.sh` 主要完成：
+
+- 安装基础依赖（ssh/rsync 等）
+- 修复克隆导致的冲突（machine-id、ssh host keys）
+- 配置主机名
+- 配置静态 IP（默认读取 `cluster.conf`，也可参数覆盖）
+- 写入 `/etc/hosts`
+- 为 `hadoop` 用户生成 SSH key，并配置 **self-ssh（自己免密登录自己）**，避免 Hadoop 启动时 NameNode 失败
+
+`sc_master.sh` 主要完成：
+
+- 在 master 下载并安装 JDK / Hadoop
+- 生成 Hadoop 集群配置
+- 将 JDK/Hadoop/配置通过 `hadoop@worker` 分发到 worker1/worker2，并使用 sudo 落地到 `/opt`、`/etc/profile.d`、`/data`
+
+> 注意：`SSH_PUSH_MODE=copy-id` 时，会提示你输入 worker 上 `hadoop` 用户密码（用于 ssh-copy-id），以及远程 sudo 密码（通常也是 hadoop 密码）。
+>  若希望全自动，可在 `cluster.conf` 设置 `SSH_PUSH_MODE=sshpass` 并填写 `SSH_DEFAULT_PASSWORD`。
+
+
+
+## Q Web UI 访问地址是什么？
+
+**默认端口**（Hadoop 3.x 常见）：
+
+- NameNode UI：`http://master:9870`
+- ResourceManager UI：`http://master:8088`
+- JobHistory UI：`http://master:19888`
+
+
+
+## x 参考文献
 
 2020年, [hadoop环境部署自动化shell脚本（伪分布式、完全分布式集群搭建）](https://blog.csdn.net/weixin_42011520/article/details/107571965)
 
