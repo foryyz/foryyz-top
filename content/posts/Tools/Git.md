@@ -8,11 +8,11 @@ tags: ['Git']
 >
 > Create Time - 2024/06/06
 >
-> **Last Update Time - 2024/11/13**
+> **Last Update Time - 2026/03/07**
 
 # Git
 
-## 0 基础设置
+## 0 安装与配置Git
 
 **安装**(Linux) `sudo pacman -S git`
 
@@ -109,7 +109,30 @@ git clean -fdn
 git log --oneline
 ```
 
-## 7 Git 代理设置
+
+
+## 7 分支管理
+
+```bash
+# 一步创建并切换到分支 
+git checkout -b <new-brance-name>
+
+# 创建分支 <new-brance-name>
+git branch <new-brance-name>
+
+# 切换到分支 <brance-name>
+git checkout <brance-name>
+
+# 把 <brance-name> 合并到 当前分支；合并分支的意义为：把另一个分支的提交合并到当前分支
+git merge <brance-name>
+
+# 删除分支 <brance-name>
+git branch -d <brance-name>
+```
+
+
+
+## x1 Git 代理设置
 
 ### 设置代理
 
